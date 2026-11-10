@@ -90,6 +90,8 @@
   input.nick { flex:0 1 120px; min-width:0; }
   input.text { flex:1 1 200px; min-width:0; }
   .review-fields { display:flex; gap:8px; }
+  .done summary { cursor:pointer; font-size:13px; font-weight:700; color:var(--blue); }
+  .done details[open] summary { margin-bottom:10px; }
   form button { flex:none; white-space:nowrap; min-height:44px; padding:0 16px; border:0; border-radius:6px; background:var(--blue); color:#fff; font:inherit; font-size:14px; font-weight:700; cursor:pointer; }
   .status { padding:24px; border-radius:10px; background:var(--soft); color:var(--sub); font-size:15px; line-height:1.6; }
   footer { border-top:1px solid var(--line); padding-top:20px; font-size:13px; line-height:1.6; color:var(--sub); display:flex; flex-direction:column; gap:6px; }
@@ -185,15 +187,23 @@ function nowCard(b, max) {
   </article>`;
 }
 
+const openDone = new Set(); // 다시 그려도 펼친 상세는 유지
+document.addEventListener('toggle', (e) => {
+  const id = e.target.dataset && e.target.dataset.done; if (!id) return;
+  e.target.open ? openDone.add(id) : openDone.delete(id);
+}, true); // toggle은 버블링 안 해서 capture
 function doneCard(d, max) {
   return `<article class="done">
     ${coverHtml(d, true)}
     <div class="body">
-      <div class="meta"><span class="field">${esc(d.field)}</span><h3>${esc(d.title)}</h3>
-        <span class="author">${esc(d.author)} · ${max}/${max}명 릴레이 완주 · ${esc(d.doneDate)}</span></div>
-      <div class="meta" style="gap:8px"><b style="font-size:13px;color:var(--navy)">후기 ${d.reviews.length}개</b>
-        ${d.reviews.map((r) => `<div class="review"><b>${esc(r.nick)}</b><span>${esc(r.text)}</span></div>`).join('')}
-      </div>
+      <h3>${esc(d.title)}</h3>
+      <details data-done="${esc(d.id)}" ${openDone.has(d.id) ? 'open' : ''}>
+        <summary>후기 ${d.reviews.length}개 · 자세히 보기</summary>
+        <div class="meta" style="gap:8px">
+          <span class="author"><span class="field">${esc(d.field)}</span> · ${esc(d.author)} · ${max}/${max}명 릴레이 완주 · ${esc(d.doneDate)}</span>
+          ${d.reviews.map((r) => `<div class="review"><b>${esc(r.nick)}</b><span>${esc(r.text)}</span></div>`).join('')}
+        </div>
+      </details>
       <form data-id="${esc(d.id)}">
         <label for="t-${esc(d.id)}">후기 남기기</label>
         <div class="review-fields">
@@ -360,6 +370,7 @@ document.addEventListener('submit', (e) => {
   (savedReviews[form.dataset.id] ||= []).push(review);
   localStorage.setItem(REVIEW_KEY, JSON.stringify(savedReviews));
   data.done.find((d) => d.id === form.dataset.id).reviews.push(review);
+  openDone.add(form.dataset.id); // 방금 쓴 후기가 보이게 펼침
   render();
 });
 
