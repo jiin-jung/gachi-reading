@@ -79,7 +79,7 @@
   .done-link { display:flex; flex-direction:column; gap:12px; }
   .btn { display:flex; align-items:center; justify-content:center; min-height:44px; border-radius:6px; background:var(--blue); color:#fff !important; font-size:14px; font-weight:700; }
   .done-page { width:100%; max-width:640px; margin-top:32px; display:flex; flex-direction:column; gap:16px; text-align:left; }
-  .done-page .back { font-size:14px; color:var(--sub); text-decoration:none; }
+  .done-page .back { align-self:flex-start; display:inline-flex; align-items:center; min-height:44px; padding:0 16px; border:1px solid var(--line); border-radius:999px; font-size:14px; font-weight:500; color:var(--navy); text-decoration:none; }
   .done-head { display:flex; gap:24px; align-items:flex-end; }
   .done-head .cover { flex:0 0 140px; }
   .done-head h2 { margin:4px 0; font-size:26px; color:var(--navy); letter-spacing:-0.02em; }
@@ -200,7 +200,7 @@ function doneCard(d) {
 // 완주한 책 상세 (#done/<id>, 후기 남기기 버튼은 #done/<id>/review → 입력칸 포커스)
 function donePage(d, max) {
   return `<section class="done-page">
-    <a class="back" href="#">← 목록으로</a>
+    <a class="back" href="#">← 목록으로 돌아가기</a>
     <div class="done-head">${coverHtml(d)}
       <div class="meta"><span class="field">${esc(d.field)}</span><h2>${esc(d.title)}</h2>
         <span class="author">${esc(d.author)} · ${max}/${max}명 릴레이 완주 · ${esc(d.doneDate)}</span></div></div>
@@ -216,7 +216,12 @@ function donePage(d, max) {
     </form>
   </section>`;
 }
-window.addEventListener('hashchange', () => { render(); window.scrollTo(0, 0); });
+// 상세로 가면 맨 위, 목록으로 돌아오면 완주한 책 섹션으로
+window.addEventListener('hashchange', () => {
+  render();
+  const list = !location.hash && document.querySelector('.done-list');
+  setTimeout(() => (list ? list.scrollIntoView() : window.scrollTo(0, 0))); // '#' 링크의 기본 맨 위 스크롤 뒤에 실행
+});
 
 function render() {
   if (!data) return;
@@ -228,6 +233,7 @@ function render() {
   const route = location.hash.match(/^#done\/([^/]+)(\/review)?$/);
   const page = route && data.done.find((d) => d.id === decodeURIComponent(route[1]));
   if (page) {
+    document.getElementById('sub').textContent = '메모 카드로 이어 읽는 교환독서';
     document.getElementById('list-now').innerHTML = donePage(page, data.relayMax);
     loadCovers();
     if (route[2]) document.getElementById('t-' + page.id).focus();
