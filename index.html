@@ -76,6 +76,8 @@
   .badge.loan { color:var(--sub); background:#F1F3F5; }
   .done { border:1px solid var(--line); border-radius:14px; padding:20px; display:flex; flex-wrap:wrap; gap:20px; }
   .done-list { width:100%; margin-top:48px; text-align:left; }
+  .done-list .sec { padding:0; margin-bottom:8px; }
+  .nav[hidden] { display:none; }
   .done .cover { flex:0 0 104px; height:140px; aspect-ratio:auto; border-radius:3px 12px 12px 3px; padding:12px 12px 12px 18px; }
   .done .cover .t { font-size:13px; }
   .done .body { flex:999 1 240px; min-width:0; display:flex; flex-direction:column; gap:12px; }
@@ -88,7 +90,7 @@
   input.nick { flex:0 1 120px; min-width:0; }
   input.text { flex:1 1 200px; min-width:0; }
   .review-fields { display:flex; gap:8px; }
-  form button { min-height:44px; padding:0 16px; border:0; border-radius:6px; background:var(--blue); color:#fff; font:inherit; font-size:14px; font-weight:700; cursor:pointer; }
+  form button { flex:none; white-space:nowrap; min-height:44px; padding:0 16px; border:0; border-radius:6px; background:var(--blue); color:#fff; font:inherit; font-size:14px; font-weight:700; cursor:pointer; }
   .status { padding:24px; border-radius:10px; background:var(--soft); color:var(--sub); font-size:15px; line-height:1.6; }
   footer { border-top:1px solid var(--line); padding-top:20px; font-size:13px; line-height:1.6; color:var(--sub); display:flex; flex-direction:column; gap:6px; }
   @media (max-width:600px){ h1.title span{font-size:28px} .wrap, main > h1, .sec, footer{padding-left:20px; padding-right:20px} .row{gap:10px} .pick .cover .t{font-size:16px} }
@@ -196,7 +198,7 @@ function doneCard(d, max) {
         <label for="t-${esc(d.id)}">후기 남기기</label>
         <div class="review-fields">
           <input class="nick" name="nick" placeholder="닉네임" aria-label="닉네임" maxlength="20">
-          <input class="text" id="t-${esc(d.id)}" name="text" placeholder="이어 읽은 소감을 한 줄로" maxlength="200" required>
+          <input class="text" id="t-${esc(d.id)}" name="text" placeholder="한 줄 소감" maxlength="200" required>
           <button type="submit">등록</button>
         </div>
       </form>
@@ -229,6 +231,7 @@ function updateNav() {
     const tr = c.querySelector('.track'); const [prev, next] = c.querySelectorAll('.nav button');
     prev.disabled = tr.scrollLeft <= 2;
     next.disabled = tr.scrollLeft + tr.clientWidth >= tr.scrollWidth - 2;
+    c.querySelector('.nav').hidden = prev.disabled && next.disabled; // 넘길 게 없으면 화살표 숨김
   }
 }
 document.addEventListener('scroll', (e) => { if (e.target.classList && e.target.classList.contains('track')) updateNav(); }, true);
