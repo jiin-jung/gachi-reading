@@ -49,7 +49,7 @@
   .track { display:flex; gap:24px; overflow-x:auto; scroll-snap-type:x mandatory; scroll-padding-left:2px; padding:4px 2px 16px; scrollbar-width:thin; -webkit-overflow-scrolling:touch; }
   .track > * { scroll-snap-align:start; flex:0 0 auto; }
   .track .book { width:220px; }
-  .track .done { width:min(460px,85vw); }
+  .track .done { width:200px; }
   .nav { display:flex; align-items:center; gap:8px; justify-content:flex-end; margin-bottom:8px; }
   .nav span { margin-right:auto; font-size:13px; color:var(--sub); }
   .nav button { width:44px; height:44px; border-radius:999px; border:1px solid var(--line); background:#fff; color:var(--navy); cursor:pointer; display:grid; place-items:center; }
@@ -74,13 +74,18 @@
   .badge { align-self:flex-start; font-size:13px; font-weight:500; border-radius:4px; padding:4px 10px; }
   .badge.ok { color:var(--blue); background:#D6E6FA; }
   .badge.loan { color:var(--sub); background:#F1F3F5; }
-  .done { border:1px solid var(--line); border-radius:14px; padding:20px; display:flex; flex-wrap:wrap; gap:20px; }
+  .done { display:flex; flex-direction:column; gap:12px; }
+  .done a { color:inherit; text-decoration:none; }
+  .done-link { display:flex; flex-direction:column; gap:12px; }
+  .btn { display:flex; align-items:center; justify-content:center; min-height:44px; border-radius:6px; background:var(--blue); color:#fff !important; font-size:14px; font-weight:700; }
+  .done-page { width:100%; max-width:640px; margin-top:32px; display:flex; flex-direction:column; gap:16px; text-align:left; }
+  .done-page .back { font-size:14px; color:var(--sub); text-decoration:none; }
+  .done-head { display:flex; gap:24px; align-items:flex-end; }
+  .done-head .cover { flex:0 0 140px; }
+  .done-head h2 { margin:4px 0; font-size:26px; color:var(--navy); letter-spacing:-0.02em; }
   .done-list { width:100%; margin-top:48px; text-align:left; }
   .done-list .sec { padding:0; margin-bottom:8px; }
   .nav[hidden] { display:none; }
-  .done .cover { flex:0 0 104px; height:140px; aspect-ratio:auto; border-radius:3px 12px 12px 3px; padding:12px 12px 12px 18px; }
-  .done .cover .t { font-size:13px; }
-  .done .body { flex:999 1 240px; min-width:0; display:flex; flex-direction:column; gap:12px; }
   .review { background:var(--soft); border-radius:10px; padding:10px 12px; }
   .review b { display:block; font-size:12px; color:var(--sub); }
   .review span { font-size:14px; line-height:1.55; color:#35373A; }
@@ -90,8 +95,6 @@
   input.nick { flex:0 1 120px; min-width:0; }
   input.text { flex:1 1 200px; min-width:0; }
   .review-fields { display:flex; gap:8px; }
-  .done summary { cursor:pointer; font-size:13px; font-weight:700; color:var(--blue); }
-  .done details[open] summary { margin-bottom:10px; }
   form button { flex:none; white-space:nowrap; min-height:44px; padding:0 16px; border:0; border-radius:6px; background:var(--blue); color:#fff; font:inherit; font-size:14px; font-weight:700; cursor:pointer; }
   .status { padding:24px; border-radius:10px; background:var(--soft); color:var(--sub); font-size:15px; line-height:1.6; }
   footer { border-top:1px solid var(--line); padding-top:20px; font-size:13px; line-height:1.6; color:var(--sub); display:flex; flex-direction:column; gap:6px; }
@@ -187,34 +190,33 @@ function nowCard(b, max) {
   </article>`;
 }
 
-const openDone = new Set(); // 다시 그려도 펼친 상세는 유지
-document.addEventListener('toggle', (e) => {
-  const id = e.target.dataset && e.target.dataset.done; if (!id) return;
-  e.target.open ? openDone.add(id) : openDone.delete(id);
-}, true); // toggle은 버블링 안 해서 capture
-function doneCard(d, max) {
+function doneCard(d) {
+  const href = '#done/' + encodeURIComponent(d.id);
   return `<article class="done">
-    ${coverHtml(d, true)}
-    <div class="body">
-      <h3>${esc(d.title)}</h3>
-      <details data-done="${esc(d.id)}" ${openDone.has(d.id) ? 'open' : ''}>
-        <summary>후기 ${d.reviews.length}개 · 자세히 보기</summary>
-        <div class="meta" style="gap:8px">
-          <span class="author"><span class="field">${esc(d.field)}</span> · ${esc(d.author)} · ${max}/${max}명 릴레이 완주 · ${esc(d.doneDate)}</span>
-          ${d.reviews.map((r) => `<div class="review"><b>${esc(r.nick)}</b><span>${esc(r.text)}</span></div>`).join('')}
-        </div>
-      </details>
-      <form data-id="${esc(d.id)}">
-        <label for="t-${esc(d.id)}">후기 남기기</label>
-        <div class="review-fields">
-          <input class="nick" name="nick" placeholder="닉네임" aria-label="닉네임" maxlength="20">
-          <input class="text" id="t-${esc(d.id)}" name="text" placeholder="한 줄 소감" maxlength="200" required>
-          <button type="submit">등록</button>
-        </div>
-      </form>
-    </div>
+    <a class="done-link" href="${href}">${coverHtml(d)}<h3>${esc(d.title)}</h3></a>
+    <a class="btn" href="${href}/review">후기 남기기</a>
   </article>`;
 }
+// 완주한 책 상세 (#done/<id>, 후기 남기기 버튼은 #done/<id>/review → 입력칸 포커스)
+function donePage(d, max) {
+  return `<section class="done-page">
+    <a class="back" href="#">← 목록으로</a>
+    <div class="done-head">${coverHtml(d)}
+      <div class="meta"><span class="field">${esc(d.field)}</span><h2>${esc(d.title)}</h2>
+        <span class="author">${esc(d.author)} · ${max}/${max}명 릴레이 완주 · ${esc(d.doneDate)}</span></div></div>
+    <h3>후기 ${d.reviews.length}개</h3>
+    ${d.reviews.map((r) => `<div class="review"><b>${esc(r.nick)}</b><span>${esc(r.text)}</span></div>`).join('') || '<div class="status">아직 후기가 없어요. 첫 후기를 남겨주세요</div>'}
+    <form data-id="${esc(d.id)}">
+      <label for="t-${esc(d.id)}">후기 남기기</label>
+      <div class="review-fields">
+        <input class="nick" name="nick" placeholder="닉네임" aria-label="닉네임" maxlength="20">
+        <input class="text" id="t-${esc(d.id)}" name="text" placeholder="이어 읽은 소감을 한 줄로" maxlength="200" required>
+        <button type="submit">등록</button>
+      </div>
+    </form>
+  </section>`;
+}
+window.addEventListener('hashchange', () => { render(); window.scrollTo(0, 0); });
 
 function render() {
   if (!data) return;
@@ -223,8 +225,16 @@ function render() {
 
   const head = (t, n) => `<h2 class="sec">${t} <span>${n}권</span></h2>`;
   document.getElementById('sub').textContent = `메모 카드로 이어 읽는 교환독서 · 지금 ${now.length}권이 이어 읽히는 중 · 책에 마우스를 올려보세요`;
+  const route = location.hash.match(/^#done\/([^/]+)(\/review)?$/);
+  const page = route && data.done.find((d) => d.id === decodeURIComponent(route[1]));
+  if (page) {
+    document.getElementById('list-now').innerHTML = donePage(page, data.relayMax);
+    loadCovers();
+    if (route[2]) document.getElementById('t-' + page.id).focus();
+    return;
+  }
   document.getElementById('list-now').innerHTML = (now.length ? shelf(now) : `<div class="status">진행 중인 책이 없어요.</div>`)
-    + (done.length ? `<section class="done-list">${head('완주한 책', done.length)}${carousel(done.map((d) => doneCard(d, data.relayMax)).join(''), 'done')}</section>` : '');
+    + (done.length ? `<section class="done-list">${head('완주한 책', done.length)}${carousel(done.map(doneCard).join(''), 'done')}</section>` : '');
   loadCovers();
   updateNav();
 }
@@ -370,7 +380,6 @@ document.addEventListener('submit', (e) => {
   (savedReviews[form.dataset.id] ||= []).push(review);
   localStorage.setItem(REVIEW_KEY, JSON.stringify(savedReviews));
   data.done.find((d) => d.id === form.dataset.id).reviews.push(review);
-  openDone.add(form.dataset.id); // 방금 쓴 후기가 보이게 펼침
   render();
 });
 
