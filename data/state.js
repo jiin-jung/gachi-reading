@@ -54,6 +54,7 @@ export default {
   "done": [
     {
       "id": "done-1",
+      "isbn": "9788936434120",
       "title": "소년이 온다",
       "author": "한강",
       "field": "어문학",
@@ -64,6 +65,7 @@ export default {
     },
     {
       "id": "done-2",
+      "isbn": "9791189327156",
       "title": "물고기는 존재하지 않는다",
       "author": "룰루 밀러",
       "field": "자연과학",
