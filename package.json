@@ -1,0 +1,9 @@
+{
+  "name": "gachi-reading",
+  "version": "0.2.0",
+  "private": true,
+  "description": "가치 읽기 : 메모 카드로 이어 읽는 교환독서 — 현황 페이지 프로토타입 (Vercel 배포용)",
+  "type": "module",
+  "engines": { "node": ">=18" },
+  "scripts": { "start": "node dev-server.js" }
+}

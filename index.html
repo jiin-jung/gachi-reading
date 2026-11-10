@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>가치 읽기 · 인천대학교 학산도서관</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+  :root { --blue:#0A4A9B; --navy:#002F6A; --ink:#2F2F32; --sub:#5F6368; --line:#E6E9ED; --soft:#F7F8FA; --cover:#F1F4F8; --point:#FDB31E; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:#fff; color:var(--ink); font-family:'Pretendard',system-ui,sans-serif; }
+  header { border-bottom:1px solid var(--line); }
+  .wrap { max-width:1200px; margin:0 auto; padding:0 32px; }
+  .top { display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; padding:18px 0; }
+  .brand { display:flex; align-items:center; gap:10px; font-size:18px; font-weight:700; color:var(--navy); letter-spacing:-0.02em; }
+  .tag { font-size:13px; color:var(--sub); border:1px solid var(--line); border-radius:999px; padding:4px 12px; }
+  main { padding:48px 0 64px; display:flex; flex-direction:column; gap:32px; }
+  main > h1, .sec, footer { width:100%; max-width:1200px; margin-left:auto; margin-right:auto; padding-left:32px; padding-right:32px; }
+  #list-now { display:flex; flex-direction:column; gap:20px; }
+  .eyebrow { margin:0; font-size:14px; font-weight:700; color:var(--blue); }
+  h1.title { margin:0; display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 12px; letter-spacing:-0.03em; }
+  h1.title span { font-size:36px; font-weight:700; color:var(--navy); }
+  h1.title small { font-size:18px; font-weight:500; color:var(--sub); }
+  .lead { margin:0; max-width:640px; font-size:17px; line-height:1.7; color:#4D4F53; }
+  .sec { margin:0; font-size:22px; letter-spacing:-0.02em; color:var(--navy); }
+  .sec span { font-size:16px; font-weight:500; color:var(--sub); }
+  .tabs { display:flex; gap:4px; border-bottom:1px solid var(--line); }
+  .tabs button { min-height:48px; padding:0 20px; border:0; border-bottom:3px solid transparent; margin-bottom:-1px; background:none; font:inherit; font-size:16px; color:var(--sub); cursor:pointer; }
+  .tabs button[aria-pressed="true"] { border-bottom-color:var(--blue); color:var(--blue); font-weight:700; }
+  .count { margin-left:auto; font-size:14px; color:var(--sub); }
+  .shelf { display:flex; align-items:center; gap:12px; padding:0 16px; }
+  .row { flex:1 1 auto; min-width:0; display:flex; align-items:flex-end; gap:24px; padding:56px 8px 8px; outline:none; touch-action:pan-y; }
+  .row:focus-visible { box-shadow:0 0 0 2px var(--blue); border-radius:8px; }
+  .pick { flex:1 1 0; min-width:0; padding:0; border:0; background:none; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:14px; font:inherit; }
+  .pick .cover { width:100%; border-radius:6px 22px 22px 6px; padding:24px 20px 24px 30px; box-shadow:inset 10px 0 0 rgba(0,47,106,.08), 3px 4px 0 var(--line); transform-origin:bottom center; transform:scale(1); opacity:.55; transition:transform .35s ease, opacity .35s ease; }
+  .pick .cover .t { font-size:20px; text-align:left; }
+  .pick .cover .a { font-size:13px; text-align:left; }
+  .pick[aria-selected="true"] .cover { transform:scale(1.12); opacity:1; }
+  .pick .dot { width:8px; height:8px; border-radius:999px; background:var(--blue); opacity:0; transition:opacity .35s ease; }
+  .pick[aria-selected="true"] .dot { opacity:1; }
+  .arrow { flex:0 0 auto; width:44px; height:44px; border-radius:999px; border:1px solid var(--line); background:#fff; color:var(--navy); cursor:pointer; display:grid; place-items:center; }
+  .detail { margin:8px 72px 0; border:1px solid var(--line); border-radius:14px; padding:28px 32px; display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:20px 40px; align-items:start; }
+  @media (max-width:600px){ .detail{ margin:8px 16px 0; padding:20px; } }
+  .detail h3 { font-size:22px; color:var(--navy); }
+  .detail .bar { height:8px; }
+  .detail .bar > div { transition:width .35s ease; }
+  .carousel { position:relative; }
+  .track { display:flex; gap:24px; overflow-x:auto; scroll-snap-type:x mandatory; scroll-padding-left:2px; padding:4px 2px 16px; scrollbar-width:thin; -webkit-overflow-scrolling:touch; }
+  .track > * { scroll-snap-align:start; flex:0 0 auto; }
+  .track .book { width:220px; }
+  .track .done { width:min(460px,85vw); }
+  .nav { display:flex; align-items:center; gap:8px; justify-content:flex-end; margin-bottom:8px; }
+  .nav span { margin-right:auto; font-size:13px; color:var(--sub); }
+  .nav button { width:44px; height:44px; border-radius:999px; border:1px solid var(--line); background:#fff; color:var(--navy); cursor:pointer; display:grid; place-items:center; }
+  .nav button:disabled { opacity:.35; cursor:default; }
+  .book { display:flex; flex-direction:column; gap:12px; }
+  .cover { position:relative; aspect-ratio:3/4; border-radius:4px 16px 16px 4px; overflow:hidden; border:1px solid var(--line); border-top:4px solid var(--point); background:var(--cover); color:var(--navy); box-shadow:inset 8px 0 0 rgba(0,47,106,.08), 2px 3px 0 var(--line); padding:18px 16px 18px 24px; display:flex; flex-direction:column; justify-content:space-between; }
+  .cover img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  .cover .t { font-size:17px; line-height:1.4; font-weight:700; letter-spacing:-0.02em; }
+  .cover .a { font-size:12px; opacity:.85; }
+  .field { font-size:12px; font-weight:700; color:var(--blue); }
+  h3 { margin:0; font-size:16px; line-height:1.4; }
+  .author { font-size:13px; color:var(--sub); }
+  .meta { display:flex; flex-direction:column; gap:4px; }
+  .prog-row { display:flex; justify-content:space-between; align-items:baseline; font-size:13px; }
+  .prog-row b { color:var(--navy); }
+  .prog-row span { font-size:12px; color:var(--sub); }
+  .bar { height:6px; border-radius:999px; background:var(--line); overflow:hidden; margin-top:6px; }
+  .bar > div { height:100%; background:var(--blue); border-radius:999px; }
+  .memo { background:var(--soft); border-radius:10px; padding:10px 12px; display:flex; flex-direction:column; gap:4px; }
+  .memo b { font-size:12px; color:var(--blue); }
+  .memo span { font-size:13px; line-height:1.55; color:#35373A; }
+  .badge { align-self:flex-start; font-size:13px; font-weight:500; border-radius:4px; padding:4px 10px; }
+  .badge.ok { color:var(--blue); background:#D6E6FA; }
+  .badge.loan { color:var(--sub); background:#F1F3F5; }
+  .done { border:1px solid var(--line); border-radius:14px; padding:20px; display:flex; flex-wrap:wrap; gap:20px; }
+  .done .cover { flex:0 0 104px; height:140px; aspect-ratio:auto; border-radius:3px 12px 12px 3px; padding:12px 12px 12px 18px; }
+  .done .cover .t { font-size:13px; }
+  .done .body { flex:999 1 240px; min-width:0; display:flex; flex-direction:column; gap:12px; }
+  .review { background:var(--soft); border-radius:10px; padding:10px 12px; }
+  .review b { display:block; font-size:12px; color:var(--sub); }
+  .review span { font-size:14px; line-height:1.55; color:#35373A; }
+  form { display:flex; flex-direction:column; gap:8px; }
+  form label { font-size:13px; font-weight:500; }
+  input { min-height:44px; padding:0 12px; border:1px solid #CDD4DC; border-radius:6px; font:inherit; font-size:14px; color:var(--ink); }
+  input.nick { flex:0 1 120px; min-width:0; }
+  input.text { flex:1 1 200px; min-width:0; }
+  form button { min-height:44px; padding:0 16px; border:0; border-radius:6px; background:var(--blue); color:#fff; font:inherit; font-size:14px; font-weight:700; cursor:pointer; }
+  .status { padding:24px; border-radius:10px; background:var(--soft); color:var(--sub); font-size:15px; line-height:1.6; }
+  footer { border-top:1px solid var(--line); padding-top:20px; font-size:13px; line-height:1.6; color:var(--sub); display:flex; flex-direction:column; gap:6px; }
+  @media (max-width:600px){ h1.title span{font-size:28px} .wrap, main > h1, .sec, footer{padding-left:20px; padding-right:20px} .row{gap:10px} .pick .cover .t{font-size:16px} }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+  /* 가운데 한 축 레이아웃 */
+  main { padding:56px 48px 64px; display:flex; flex-direction:column; align-items:center; gap:0; text-align:center; }
+  main > h1, footer { padding-left:0; padding-right:0; }
+  h1.title { align-self:stretch; padding-left:0; flex-direction:column; align-items:flex-start; gap:8px; text-align:left; }
+  h1.title span { font-size:40px; }
+  h1.title small { font-size:17px; }
+  #list-now { width:100%; display:flex; flex-direction:column; align-items:center; gap:0; }
+  .shelf { width:100%; padding:0; margin-top:24px; }
+  .arrow { width:48px; height:48px; }
+  .row { padding:48px 0 0; }
+  .detail { animation:fadeUp .3s ease; width:100%; max-width:640px; margin:28px 0 0; padding:0; border:0; display:flex; flex-direction:column; align-items:center; gap:14px; }
+  .detail h2 { margin:-6px 0 0; font-size:28px; line-height:1.3; letter-spacing:-0.02em; color:var(--navy); }
+  .detail .author { margin-top:-6px; font-size:15px; }
+  .detail .prog { width:100%; max-width:360px; display:flex; flex-direction:column; gap:8px; margin-top:8px; font-size:14px; }
+  .detail .prog b { color:var(--navy); }
+  .detail .bar { margin:0; }
+  .detail blockquote { margin:12px 0 0; font-size:18px; line-height:1.65; color:#35373A; }
+  .detail blockquote b { display:block; font-size:12px; color:var(--blue); margin-bottom:6px; }
+  footer { width:100%; max-width:760px; margin-top:56px; gap:4px; }
+  @media (max-width:600px){ main{padding:40px 16px 48px} h1.title span{font-size:30px} .arrow{width:40px;height:40px} .shelf{gap:6px} .detail h2{font-size:22px} }
+  .row { margin-bottom:200px; }
+  .pick { position:relative; }
+  .pick .dot { display:none; }
+  .bubble { position:absolute; top:calc(100% + 18px); left:50%; transform:translateX(-50%); z-index:5; width:280px; padding:16px 18px; border-radius:14px; background:#fff; border:1px solid var(--line); box-shadow:0 8px 24px rgba(0,47,106,.12); display:none; flex-direction:column; gap:6px; text-align:left; }
+  .bubble::before { content:''; position:absolute; top:-7px; left:50%; width:12px; height:12px; background:#fff; border-left:1px solid var(--line); border-top:1px solid var(--line); transform:translateX(-50%) rotate(45deg); }
+  .bubble.first { left:0; transform:none; } .bubble.first::before { left:36%; }
+  .bubble.last { left:auto; right:0; transform:none; } .bubble.last::before { left:64%; }
+  .pick[aria-selected="true"] .bubble { display:flex; animation:bubbleIn .25s ease; }
+  @keyframes bubbleIn { from { opacity:0; margin-top:-6px; } to { opacity:1; margin-top:0; } }
+  .bubble .f { font-size:12px; font-weight:700; color:var(--blue); }
+  .bubble .t2 { font-size:17px; line-height:1.35; font-weight:700; color:var(--navy); }
+  .bubble .au { font-size:13px; color:var(--sub); }
+  .bubble .bar { display:block; height:6px; margin-top:6px; }
+  .bubble .bar > span { display:block; height:100%; background:var(--blue); border-radius:999px; }
+  .bubble .p { font-size:13px; } .bubble .p b { color:var(--navy); }
+  .bubble .s { font-size:13px; color:var(--sub); }
+  @media (max-width:600px){ .bubble{ width:220px; } }
+</style>
+</head>
+<body>
+<header><div class="wrap top">
+  <div class="brand">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0A4A9B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5.5C5.5 4.5 8.5 4.5 12 6.5c3.5-2 6.5-2 9-1v13c-2.5-1-5.5-1-9 1-3.5-2-6.5-2-9-1z"/><path d="M12 6.5v13"/></svg>
+    인천대학교 학산도서관
+  </div>
+</div></header>
+
+<main>
+  <h1 class="title"><span>가치 읽기</span><small id="sub">메모 카드로 이어 읽는 교환독서</small></h1>
+  <section id="list-now"><div class="status">국립중앙도서관 사서추천도서를 불러오는 중…</div></section>
+  <footer>
+    <span>도서 정보: 국립중앙도서관 사서추천도서 Open API · 표지: 국중도 서지정보 API, 없으면 카카오 책 검색 API, 구글 북스 API (모두 없으면 제목으로 표시)</span>
+    <span>참여 인원·대출 상태는 예시 데이터입니다.</span>
+    <span>이 페이지는 학산도서관 서비스 아이디어 공모전 제안용 프로토타입이며, 도서관 공식 서비스가 아닙니다.</span>
+  </footer>
+</main>
+
+<script>
+const FIELDS = ['전체', '인문과학', '어문학', '사회과학', '자연과학', '기타'];
+const ui = { field: '전체', sel: -1 };
+let data = null;
+
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+
+function coverHtml(b, small) {
+  // 표지 이미지는 나중에 /api/cover로 채움. 없으면 제목 표지 그대로.
+  return `<div class="cover" ${b.isbn ? `data-isbn="${esc(b.isbn)}"` : ''} aria-hidden="true">
+    <span class="t">${esc(b.title)}</span><span class="a">${esc(b.author)}</span></div>`;
+}
+
+function nowCard(b, max) {
+  const left = max - b.readers;
+  const badge = b.due ? `<span class="badge loan">대출 중 · 반납 예정 ${esc(b.due)}</span>` : `<span class="badge ok">대출 가능</span>`;
+  return `<article class="book">
+    ${coverHtml(b)}
+    <div class="meta"><span class="field">${esc(b.field)}</span><h3>${esc(b.title)}</h3><span class="author">${esc(b.author)}</span></div>
+    <div>
+      <div class="prog-row"><b>참여 ${b.readers}/${max}명</b><span>${left > 0 ? `완주까지 ${left}명` : '완주!'}</span></div>
+      <div class="bar" role="img" aria-label="참여 ${max}명 중 ${b.readers}명"><div style="width:${(b.readers / max) * 100}%"></div></div>
+    </div>
+    <div class="memo"><b>${b.memo ? '최근 메모' : '메모 없음'}</b><span>${esc(b.memo || '아직 메모가 없어요. 첫 번째 독자가 되어주세요')}</span></div>
+    ${badge}
+  </article>`;
+}
+
+function doneCard(d, max) {
+  return `<article class="done">
+    ${coverHtml(d, true)}
+    <div class="body">
+      <div class="meta"><span class="field">${esc(d.field)}</span><h3>${esc(d.title)}</h3>
+        <span class="author">${esc(d.author)} · ${max}/${max}명 릴레이 완주 · ${esc(d.doneDate)}</span></div>
+      <div class="meta" style="gap:8px"><b style="font-size:13px;color:var(--navy)">후기 ${d.reviews.length}개</b>
+        ${d.reviews.map((r) => `<div class="review"><b>${esc(r.nick)}</b><span>${esc(r.text)}</span></div>`).join('')}
+      </div>
+      <form data-id="${esc(d.id)}">
+        <label for="t-${esc(d.id)}">후기 남기기</label>
+        <div class="row">
+          <input class="nick" name="nick" placeholder="닉네임" aria-label="닉네임" maxlength="20">
+          <input class="text" id="t-${esc(d.id)}" name="text" placeholder="이어 읽은 소감을 한 줄로" maxlength="200" required>
+          <button type="submit">등록</button>
+        </div>
+      </form>
+    </div>
+  </article>`;
+}
+
+function render() {
+  if (!data) return;
+  const match = (b) => ui.field === '전체' || b.field === ui.field;
+  const now = data.now.filter(match), done = data.done.filter(match);
+
+  const head = (t, n) => `<h2 class="sec">${t} <span>${n}권</span></h2>`;
+  document.getElementById('sub').textContent = `메모 카드로 이어 읽는 교환독서 · 지금 ${now.length}권이 이어 읽히는 중 · 책에 마우스를 올려보세요`;
+  document.getElementById('list-now').innerHTML = (now.length ? shelf(now) : `<div class="status">진행 중인 책이 없어요.</div>`);
+  loadCovers();
+  updateNav();
+}
+
+const ARROW = (d) => `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${d}"/></svg>`;
+function carousel(cards, id) {
+  return `<div class="carousel" data-c="${id}"><div class="nav"><span>옆으로 넘겨서 더 보기</span>
+    <button type="button" data-dir="-1" aria-label="이전 책">${ARROW('M15 18l-6-6 6-6')}</button>
+    <button type="button" data-dir="1" aria-label="다음 책">${ARROW('M9 18l6-6-6-6')}</button></div>
+    <div class="track" tabindex="0" aria-label="책 목록, 좌우로 스크롤">${cards}</div></div>`;
+}
+function updateNav() {
+  for (const c of document.querySelectorAll('.carousel')) {
+    const tr = c.querySelector('.track'); const [prev, next] = c.querySelectorAll('.nav button');
+    prev.disabled = tr.scrollLeft <= 2;
+    next.disabled = tr.scrollLeft + tr.clientWidth >= tr.scrollWidth - 2;
+  }
+}
+document.addEventListener('scroll', (e) => { if (e.target.classList && e.target.classList.contains('track')) updateNav(); }, true);
+window.addEventListener('resize', updateNav);
+
+function bubble(b, max, i, n) {
+  const pos = i === 0 ? 'first' : i === n - 1 ? 'last' : '';
+  const left = max - b.readers;
+  const status = b.due ? `대출 중 (반납 예정 ${esc(b.due)})` : '대출 가능';
+  return `<span class="bubble ${pos}" role="tooltip">
+    <span class="f">${esc(b.field)}</span>
+    <span class="t2">${esc(b.title)}</span>
+    <span class="au">${esc(b.author)}${b.publisher ? ' · ' + esc(b.publisher) : ''}</span>
+    <span class="bar" role="img" aria-label="참여 ${max}명 중 ${b.readers}명"><span style="width:${(b.readers / max) * 100}%"></span></span>
+    <span class="p"><b>참여 ${b.readers}/${max}명</b> · ${left > 0 ? `완주까지 ${left}명` : '완주!'}</span>
+    <span class="s">${status}</span>
+  </span>`;
+}
+function shelf(books) {
+  return `<div class="shelf">
+    <div class="row" role="listbox" tabindex="0" aria-label="지금 읽는 중인 책 (마우스를 올리거나 ← → 키로 이동)">
+      ${books.map((b, i) => `<button type="button" class="pick" role="option" data-sel="${i}" aria-selected="${i === ui.sel}" aria-label="${esc(b.title)}">${coverHtml(b)}${bubble(b, data.relayMax, i, books.length)}</button>`).join('')}
+    </div></div>`;
+}
+function detail(b, max) {
+  const left = max - b.readers;
+  const status = b.due ? `대출 중 (반납 예정 ${esc(b.due)})` : '대출 가능';
+  return `<section class="detail" aria-live="polite">
+    <span class="field">${esc(b.field)}</span>
+    <h2>${esc(b.title)}</h2>
+    <span class="author">${esc(b.author)}${b.publisher ? ' · ' + esc(b.publisher) : ''}</span>
+    <div class="prog">
+      <div class="bar" role="img" aria-label="참여 ${max}명 중 ${b.readers}명"><div style="width:${(b.readers / max) * 100}%"></div></div>
+      <span><b>참여 ${b.readers}/${max}명</b> · ${left > 0 ? `완주까지 ${left}명` : '완주!'} · ${status}</span>
+    </div>
+  </section>`;
+}
+function select(i) {
+  if (!data || i === ui.sel) return;
+  ui.sel = i;
+  document.querySelectorAll('.pick').forEach((el, k) => el.setAttribute('aria-selected', String(k === i)));
+}
+function move(d) {
+  const n = data.now.length; if (!n) return;
+  select(ui.sel < 0 ? (d > 0 ? 0 : n - 1) : (ui.sel + d + n) % n);
+}
+
+const coverUrls = {};
+async function loadCovers() {
+  for (const el of document.querySelectorAll('.cover[data-isbn]')) {
+    const isbn = el.dataset.isbn;
+    if (!(isbn in coverUrls)) {
+      coverUrls[isbn] = '';
+      try { coverUrls[isbn] = (await (await fetch('/api/cover?isbn=' + isbn)).json()).url || ''; } catch {}
+    }
+    if (coverUrls[isbn] && !el.querySelector('img')) {
+      const img = new Image();
+      img.alt = '';
+      img.onerror = () => img.remove(); // 깨진 표지는 제목 표지로
+      img.src = coverUrls[isbn];
+      el.appendChild(img);
+    }
+  }
+}
+
+document.addEventListener('click', (e) => {
+  const p = e.target.closest('[data-sel]'); if (p) { select(Number(p.dataset.sel)); return; }
+  if (!e.target.closest('.row')) select(-1);
+  const m = e.target.closest('[data-move]'); if (m) { move(Number(m.dataset.move)); return; }
+  const a = e.target.closest('[data-dir]');
+  if (a) { const tr = a.closest('.carousel').querySelector('.track'); const card = tr.firstElementChild;
+    const step = card ? card.getBoundingClientRect().width + 24 : 240; // 카드 한 장 + 간격만큼
+    tr.scrollBy({ left: Number(a.dataset.dir) * step * 2, behavior: 'smooth' }); }
+});
+// 마우스를 올리면 그 책이 커지고 설명이 바뀜
+document.addEventListener('mouseover', (e) => { const p = e.target.closest && e.target.closest('[data-sel]'); if (p) select(Number(p.dataset.sel)); });
+document.addEventListener('mouseout', (e) => { const row = e.target.closest && e.target.closest('.row'); if (row && !row.contains(e.relatedTarget)) select(-1); });
+document.addEventListener('focusin', (e) => { const p = e.target.closest && e.target.closest('[data-sel]'); if (p) select(Number(p.dataset.sel)); });
+// 행에 포커스가 있을 때만 ← → 로 이동
+document.addEventListener('keydown', (e) => {
+  if (!e.target.closest || !e.target.closest('.row')) return;
+  if (e.key === 'ArrowLeft') { e.preventDefault(); move(-1); }
+  if (e.key === 'ArrowRight') { e.preventDefault(); move(1); }
+});
+// 손가락으로 휙 넘기기: 40px 이상 밀면 한 칸 이동
+let touchX = null;
+document.addEventListener('touchstart', (e) => { if (e.target.closest('.row')) touchX = e.touches[0].clientX; }, { passive: true });
+document.addEventListener('touchend', (e) => {
+  if (touchX === null) return;
+  const dx = e.changedTouches[0].clientX - touchX; touchX = null;
+  if (Math.abs(dx) > 40) move(dx < 0 ? 1 : -1);
+});
+document.addEventListener('submit', async (e) => {
+  const form = e.target.closest('form[data-id]'); if (!form) return;
+  e.preventDefault();
+  const body = { nick: form.nick.value, text: form.text.value };
+  const res = await fetch(`/api/done/${form.dataset.id}/reviews`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  const json = await res.json();
+  if (!res.ok) return alert(json.error || '등록 실패');
+  data.done.find((d) => d.id === form.dataset.id).reviews = json.reviews;
+  render();
+});
+
+fetch('/api/books').then(async (res) => {
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.error);
+  data = json; render();
+}).catch((err) => {
+  document.getElementById('list-now').innerHTML = `<div class="status">도서를 불러오지 못했어요: ${esc(err.message)}<br>Vercel 환경 변수 NL_API_KEY와 함수 로그를 확인해 주세요.</div>`;
+});
+</script>
+</body>
+</html>
