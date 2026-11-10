@@ -74,7 +74,7 @@
   .btn { display:inline-flex; align-items:center; justify-content:center; gap:6px; min-height:48px; padding:0 22px; border:1px solid var(--blue); border-radius:10px; background:var(--blue); color:#fff; font:inherit; font-size:15px; font-weight:700; text-decoration:none; white-space:nowrap; cursor:pointer; transition:background .15s, border-color .15s, transform .1s; }
   .btn:hover { background:var(--navy); border-color:var(--navy); }
   .btn:active { transform:translateY(1px); }
-  .btn:focus-visible, .pick:focus-visible { outline:3px solid rgba(10,74,155,.35); outline-offset:2px; }
+  .btn:focus-visible, .pick-link:focus-visible { outline:3px solid rgba(10,74,155,.35); outline-offset:2px; }
   .btn.ghost { background:#fff; color:var(--navy); border-color:#CDD4DC; }
   .btn.ghost:hover { background:var(--soft); border-color:var(--navy); }
   .btn.sm { min-height:40px; padding:0 14px; font-size:14px; font-weight:600; border-radius:8px; }
@@ -118,6 +118,7 @@
   footer { width:100%; max-width:760px; margin-top:56px; gap:4px; }
   @media (max-width:600px){ main{padding:40px 16px 48px} h1.title span{font-size:30px} .arrow{width:40px;height:40px} .shelf{gap:6px} .page-head h2{font-size:22px} .page-head .cover{flex-basis:110px} }
   .pick { position:relative; }
+  .pick-link { display:block; width:100%; color:inherit; text-decoration:none; }
   .bubble { position:absolute; top:calc(100% + 18px); left:50%; transform:translateX(-50%); z-index:5; width:280px; padding:16px 18px; border-radius:14px; background:#fff; border:1px solid var(--line); box-shadow:0 8px 24px rgba(0,47,106,.12); display:none; flex-direction:column; gap:6px; text-align:left; }
   .bubble::before { content:''; position:absolute; top:-7px; left:50%; width:12px; height:12px; background:#fff; border-left:1px solid var(--line); border-top:1px solid var(--line); transform:translateX(-50%) rotate(45deg); }
   .bubble.first { left:0; transform:none; } .bubble.first::before { left:36%; }
@@ -132,6 +133,8 @@
   .bubble .p { font-size:13px; } .bubble .p b { color:var(--navy); }
   .bubble .s { font-size:13px; color:var(--sub); }
   .bubble .go { margin-top:6px; padding-top:10px; border-top:1px solid var(--line); font-size:13px; font-weight:700; color:var(--blue); }
+  .bubble .btn { margin-top:6px; }
+  .bubble::after { content:''; position:absolute; left:0; right:0; top:-20px; height:20px; } /* 표지→말풍선 사이 틈에서 선택 풀리지 않게 */
   @media (max-width:600px){ .bubble{ width:220px; } }
 </style>
 </head>
@@ -269,7 +272,8 @@ function bubble(b, max, i, n) {
     <span class="bar" role="img" aria-label="참여 ${max}명 중 ${b.readers}명"><span style="width:${(b.readers / max) * 100}%"></span></span>
     <span class="p"><b>참여 ${b.readers}/${max}명</b> · ${left > 0 ? `완주까지 ${left}명` : '완주!'}</span>
     <span class="s">${status}</span>
-    <span class="go">${b.joined ? '신청한 책 · 눌러서 자세히 보기' : '눌러서 자세히 보기 · 신청하기'} →</span>
+    ${b.joined ? '<span class="go">✓ 신청했어요 · 책을 눌러 안내 보기</span>'
+      : b.readers < max ? `<button type="button" class="btn sm" data-join="${esc(b.isbn)}">신청하기</button>` : ''}
   </span>`;
 }
 // 교환독서 신청: 이 브라우저에만 저장 (프로토타입)
@@ -288,7 +292,7 @@ function joinArea(b, max) {
     <p>다 읽으면 책에 꽂힌 책갈피 카드 빈 칸에 한 줄 메모를 남기고 다음 사람에게 넘겨주세요.</p>
     <button type="button" class="btn ghost sm" data-join="${esc(b.isbn)}">신청 취소</button>`;
   if (b.readers >= max) return `<p>릴레이가 완주된 책이에요. 완주한 책에서 후기를 볼 수 있어요.</p>`;
-  return `<button type="button" class="btn" data-join="${esc(b.isbn)}">이 책 읽을래요</button>
+  return `<button type="button" class="btn" data-join="${esc(b.isbn)}">신청하기</button>
     <p>${b.due ? `${wait} · 신청하면 대기 ${esc(b.queue + 1)}번째가 돼요.` : '지금 대출 가능해요. 신청하고 대출 창구에서 받아가세요.'}</p>`;
 }
 function join(isbn) {
@@ -301,7 +305,7 @@ function join(isbn) {
 function shelf(books) {
   return `<div class="shelf">
     <div class="row" aria-label="지금 읽는 중인 책 (← → 키로 이동, Enter로 열기)">
-      ${books.map((b, i) => `<a class="pick${i === ui.sel ? ' on' : ''}" href="#book/${encodeURIComponent(b.isbn)}" data-sel="${i}" aria-label="${esc(b.title)}${b.joined ? ' (신청함)' : ''}">${coverHtml(b)}${bubble(b, data.relayMax, i, books.length)}</a>`).join('')}
+      ${books.map((b, i) => `<div class="pick${i === ui.sel ? ' on' : ''}" data-sel="${i}"><a class="pick-link" href="#book/${encodeURIComponent(b.isbn)}" aria-label="${esc(b.title)}${b.joined ? ' (신청함)' : ''}">${coverHtml(b)}</a>${bubble(b, data.relayMax, i, books.length)}</div>`).join('')}
     </div></div>`;
 }
 function select(i) {
@@ -312,7 +316,7 @@ function select(i) {
 function move(d) {
   const n = data.now.length; if (!n) return;
   select(ui.sel < 0 ? (d > 0 ? 0 : n - 1) : (ui.sel + d + n) % n);
-  document.querySelectorAll('.pick')[ui.sel]?.focus();
+  document.querySelectorAll('.pick-link')[ui.sel]?.focus();
 }
 
 const coverUrls = {};
