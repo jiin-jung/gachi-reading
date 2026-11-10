@@ -31,25 +31,18 @@
   .shelf { display:flex; align-items:center; gap:12px; padding:0 16px; }
   .row { flex:1 1 auto; min-width:0; display:flex; align-items:flex-end; gap:24px; padding:56px 8px 8px; outline:none; touch-action:pan-y; }
   .row:focus-visible { box-shadow:0 0 0 2px var(--blue); border-radius:8px; }
-  .pick { flex:1 1 0; min-width:0; padding:0; border:0; background:none; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:14px; font:inherit; }
+  .pick { flex:1 1 0; min-width:0; padding:0; border:0; background:none; cursor:pointer; color:inherit; text-decoration:none; display:flex; flex-direction:column; align-items:center; gap:14px; font:inherit; }
   .pick .cover { width:100%; border-radius:6px 22px 22px 6px; padding:24px 20px 24px 30px; box-shadow:inset 10px 0 0 rgba(0,47,106,.08), 3px 4px 0 var(--line); transform-origin:bottom center; transform:scale(1); opacity:.55; transition:transform .35s ease, opacity .35s ease; }
   .pick .cover .t { font-size:20px; text-align:left; }
   .pick .cover .a { font-size:13px; text-align:left; }
-  .pick .cover .joined-badge { position:absolute; z-index:1; top:10px; right:10px; padding:4px 8px; border-radius:999px; background:var(--point); color:var(--navy); font-size:12px; font-weight:700; }
-  .pick[aria-selected="true"] .cover { transform:scale(1.12); opacity:1; }
-  .pick .dot { width:8px; height:8px; border-radius:999px; background:var(--blue); opacity:0; transition:opacity .35s ease; }
-  .pick[aria-selected="true"] .dot { opacity:1; }
+  .cover .joined-badge { position:absolute; z-index:1; top:10px; right:10px; padding:4px 8px; border-radius:999px; background:var(--point); color:var(--navy); font-size:12px; font-weight:700; }
+  .pick.on .cover { transform:scale(1.12); opacity:1; }
   .arrow { flex:0 0 auto; width:44px; height:44px; border-radius:999px; border:1px solid var(--line); background:#fff; color:var(--navy); cursor:pointer; display:grid; place-items:center; }
-  .detail { margin:8px 72px 0; border:1px solid var(--line); border-radius:14px; padding:28px 32px; display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:20px 40px; align-items:start; }
-  @media (max-width:600px){ .detail{ margin:8px 16px 0; padding:20px; } }
-  .detail h3 { font-size:22px; color:var(--navy); }
-  .detail .bar { height:8px; }
-  .detail .bar > div { transition:width .35s ease; }
   .carousel { position:relative; }
   .track { display:flex; gap:24px; overflow-x:auto; scroll-snap-type:x mandatory; scroll-padding-left:2px; padding:4px 2px 16px; scrollbar-width:thin; -webkit-overflow-scrolling:touch; }
   .track > * { scroll-snap-align:start; flex:0 0 auto; }
   .track .book { width:220px; }
-  .track .done { width:min(460px,85vw); }
+  .track .done { width:200px; }
   .nav { display:flex; align-items:center; gap:8px; justify-content:flex-end; margin-bottom:8px; }
   .nav span { margin-right:auto; font-size:13px; color:var(--sub); }
   .nav button { width:44px; height:44px; border-radius:999px; border:1px solid var(--line); background:#fff; color:var(--navy); cursor:pointer; display:grid; place-items:center; }
@@ -74,11 +67,31 @@
   .badge { align-self:flex-start; font-size:13px; font-weight:500; border-radius:4px; padding:4px 10px; }
   .badge.ok { color:var(--blue); background:#D6E6FA; }
   .badge.loan { color:var(--sub); background:#F1F3F5; }
-  .done { border:1px solid var(--line); border-radius:14px; padding:20px; display:flex; flex-wrap:wrap; gap:20px; }
-  .done-list { width:100%; margin-top:48px; text-align:left; }
-  .done .cover { flex:0 0 104px; height:140px; aspect-ratio:auto; border-radius:3px 12px 12px 3px; padding:12px 12px 12px 18px; }
-  .done .cover .t { font-size:13px; }
-  .done .body { flex:999 1 240px; min-width:0; display:flex; flex-direction:column; gap:12px; }
+  .done { display:flex; flex-direction:column; gap:12px; }
+  .done-link { display:flex; flex-direction:column; gap:10px; color:inherit; text-decoration:none; }
+  .done-link .cover:not(:has(img)) + h3 { display:none; } /* 제목 표지면 아래 제목 중복 생략 */
+  /* 버튼: 파란 버튼(.btn) / 테두리 버튼(.btn.ghost), 작은 크기(.sm) */
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:6px; min-height:48px; padding:0 22px; border:1px solid var(--blue); border-radius:10px; background:var(--blue); color:#fff; font:inherit; font-size:15px; font-weight:700; text-decoration:none; white-space:nowrap; cursor:pointer; transition:background .15s, border-color .15s, transform .1s; }
+  .btn:hover { background:var(--navy); border-color:var(--navy); }
+  .btn:active { transform:translateY(1px); }
+  .btn:focus-visible, .pick-link:focus-visible { outline:3px solid rgba(10,74,155,.35); outline-offset:2px; }
+  .btn.ghost { background:#fff; color:var(--navy); border-color:#CDD4DC; }
+  .btn.ghost:hover { background:var(--soft); border-color:var(--navy); }
+  .btn.sm { min-height:40px; padding:0 14px; font-size:14px; font-weight:600; border-radius:8px; }
+  .page { width:100%; max-width:640px; margin-top:32px; display:flex; flex-direction:column; gap:18px; text-align:left; animation:fadeUp .25s ease; }
+  .page > .back { align-self:flex-start; }
+  .page-head { display:flex; gap:24px; align-items:flex-end; }
+  .page-head .cover { flex:0 0 140px; }
+  .page-head h2 { margin:4px 0; font-size:26px; line-height:1.3; color:var(--navy); letter-spacing:-0.02em; }
+  .page .prog { display:flex; flex-direction:column; gap:8px; font-size:14px; } .page .prog b { color:var(--navy); }
+  .page .bar { margin:0; height:8px; }
+  .action { display:flex; flex-direction:column; gap:10px; padding:20px; border:1px solid var(--line); border-radius:14px; }
+  .action .btn { align-self:stretch; } .action .btn.ghost { align-self:flex-start; }
+  .action p { margin:0; font-size:14px; line-height:1.6; color:var(--sub); }
+  .action .done-msg { font-size:16px; font-weight:700; color:var(--blue); }
+  .done-list { width:100%; margin-top:64px; text-align:left; }
+  .done-list .sec { padding:0; margin-bottom:8px; }
+  .nav[hidden] { display:none; }
   .review { background:var(--soft); border-radius:10px; padding:10px 12px; }
   .review b { display:block; font-size:12px; color:var(--sub); }
   .review span { font-size:14px; line-height:1.55; color:#35373A; }
@@ -87,8 +100,7 @@
   input { min-height:44px; padding:0 12px; border:1px solid #CDD4DC; border-radius:6px; font:inherit; font-size:14px; color:var(--ink); }
   input.nick { flex:0 1 120px; min-width:0; }
   input.text { flex:1 1 200px; min-width:0; }
-  .review-fields { display:flex; gap:8px; }
-  form button { min-height:44px; padding:0 16px; border:0; border-radius:6px; background:var(--blue); color:#fff; font:inherit; font-size:14px; font-weight:700; cursor:pointer; }
+  .review-fields { display:flex; flex-wrap:wrap; gap:8px; }
   .status { padding:24px; border-radius:10px; background:var(--soft); color:var(--sub); font-size:15px; line-height:1.6; }
   footer { border-top:1px solid var(--line); padding-top:20px; font-size:13px; line-height:1.6; color:var(--sub); display:flex; flex-direction:column; gap:6px; }
   @media (max-width:600px){ h1.title span{font-size:28px} .wrap, main > h1, .sec, footer{padding-left:20px; padding-right:20px} .row{gap:10px} .pick .cover .t{font-size:16px} }
@@ -103,24 +115,15 @@
   .shelf { width:100%; padding:0; margin-top:24px; }
   .arrow { width:48px; height:48px; }
   .row { padding:48px 0 0; }
-  .detail { animation:fadeUp .3s ease; width:100%; max-width:640px; margin:28px 0 0; padding:0; border:0; display:flex; flex-direction:column; align-items:center; gap:14px; }
-  .detail h2 { margin:-6px 0 0; font-size:28px; line-height:1.3; letter-spacing:-0.02em; color:var(--navy); }
-  .detail .author { margin-top:-6px; font-size:15px; }
-  .detail .prog { width:100%; max-width:360px; display:flex; flex-direction:column; gap:8px; margin-top:8px; font-size:14px; }
-  .detail .prog b { color:var(--navy); }
-  .detail .bar { margin:0; }
-  .detail blockquote { margin:12px 0 0; font-size:18px; line-height:1.65; color:#35373A; }
-  .detail blockquote b { display:block; font-size:12px; color:var(--blue); margin-bottom:6px; }
   footer { width:100%; max-width:760px; margin-top:56px; gap:4px; }
-  @media (max-width:600px){ main{padding:40px 16px 48px} h1.title span{font-size:30px} .arrow{width:40px;height:40px} .shelf{gap:6px} .detail h2{font-size:22px} }
-  .row { margin-bottom:200px; }
+  @media (max-width:600px){ main{padding:40px 16px 48px} h1.title span{font-size:30px} .arrow{width:40px;height:40px} .shelf{gap:6px} .page-head h2{font-size:22px} .page-head .cover{flex-basis:110px} }
   .pick { position:relative; }
-  .pick .dot { display:none; }
+  .pick-link { display:block; width:100%; color:inherit; text-decoration:none; }
   .bubble { position:absolute; top:calc(100% + 18px); left:50%; transform:translateX(-50%); z-index:5; width:280px; padding:16px 18px; border-radius:14px; background:#fff; border:1px solid var(--line); box-shadow:0 8px 24px rgba(0,47,106,.12); display:none; flex-direction:column; gap:6px; text-align:left; }
   .bubble::before { content:''; position:absolute; top:-7px; left:50%; width:12px; height:12px; background:#fff; border-left:1px solid var(--line); border-top:1px solid var(--line); transform:translateX(-50%) rotate(45deg); }
   .bubble.first { left:0; transform:none; } .bubble.first::before { left:36%; }
   .bubble.last { left:auto; right:0; transform:none; } .bubble.last::before { left:64%; }
-  .pick[aria-selected="true"] .bubble { display:flex; animation:bubbleIn .25s ease; }
+  .pick.on .bubble { display:flex; animation:bubbleIn .25s ease; }
   @keyframes bubbleIn { from { opacity:0; margin-top:-6px; } to { opacity:1; margin-top:0; } }
   .bubble .f { font-size:12px; font-weight:700; color:var(--blue); }
   .bubble .t2 { font-size:17px; line-height:1.35; font-weight:700; color:var(--navy); }
@@ -129,11 +132,9 @@
   .bubble .bar > span { display:block; height:100%; background:var(--blue); border-radius:999px; }
   .bubble .p { font-size:13px; } .bubble .p b { color:var(--navy); }
   .bubble .s { font-size:13px; color:var(--sub); }
+  .bubble .go { margin-top:6px; padding-top:10px; border-top:1px solid var(--line); font-size:13px; font-weight:700; color:var(--blue); }
+  .bubble .btn { margin-top:6px; }
   .bubble::after { content:''; position:absolute; left:0; right:0; top:-20px; height:20px; } /* 표지→말풍선 사이 틈에서 선택 풀리지 않게 */
-  .join { margin-top:8px; min-height:40px; border:0; border-radius:8px; background:var(--blue); color:#fff; font:inherit; font-size:14px; font-weight:700; cursor:pointer; }
-  .join:disabled { background:#D6E6FA; color:var(--blue); cursor:default; }
-  .join.cancel { background:#fff; color:var(--sub); border:1px solid var(--line); font-weight:500; }
-  .bubble .ok { margin-top:8px; font-size:13px; font-weight:700; color:var(--blue); }
   @media (max-width:600px){ .bubble{ width:220px; } }
 </style>
 </head>
@@ -168,41 +169,55 @@ function coverHtml(b, small) {
     ${b.joined ? '<span class="joined-badge">신청함</span>' : ''}<span class="t">${esc(b.title)}</span><span class="a">${esc(b.author)}</span></div>`;
 }
 
-function nowCard(b, max) {
-  const left = max - b.readers;
-  const badge = b.due ? `<span class="badge loan">대출 중 · 반납 예정 ${esc(b.due)}</span>` : `<span class="badge ok">대출 가능</span>`;
-  return `<article class="book">
-    ${coverHtml(b)}
-    <div class="meta"><span class="field">${esc(b.field)}</span><h3>${esc(b.title)}</h3><span class="author">${esc(b.author)}</span></div>
-    <div>
-      <div class="prog-row"><b>참여 ${b.readers}/${max}명</b><span>${left > 0 ? `완주까지 ${left}명` : '완주!'}</span></div>
-      <div class="bar" role="img" aria-label="참여 ${max}명 중 ${b.readers}명"><div style="width:${(b.readers / max) * 100}%"></div></div>
-    </div>
-    <div class="memo"><b>${b.memo ? '최근 메모' : '메모 없음'}</b><span>${esc(b.memo || '아직 메모가 없어요. 첫 번째 독자가 되어주세요')}</span></div>
-    ${badge}
-  </article>`;
-}
-
-function doneCard(d, max) {
+function doneCard(d) {
+  const href = '#done/' + encodeURIComponent(d.id);
   return `<article class="done">
-    ${coverHtml(d, true)}
-    <div class="body">
-      <div class="meta"><span class="field">${esc(d.field)}</span><h3>${esc(d.title)}</h3>
-        <span class="author">${esc(d.author)} · ${max}/${max}명 릴레이 완주 · ${esc(d.doneDate)}</span></div>
-      <div class="meta" style="gap:8px"><b style="font-size:13px;color:var(--navy)">후기 ${d.reviews.length}개</b>
-        ${d.reviews.map((r) => `<div class="review"><b>${esc(r.nick)}</b><span>${esc(r.text)}</span></div>`).join('')}
-      </div>
-      <form data-id="${esc(d.id)}">
-        <label for="t-${esc(d.id)}">후기 남기기</label>
-        <div class="review-fields">
-          <input class="nick" name="nick" placeholder="닉네임" aria-label="닉네임" maxlength="20">
-          <input class="text" id="t-${esc(d.id)}" name="text" placeholder="이어 읽은 소감을 한 줄로" maxlength="200" required>
-          <button type="submit">등록</button>
-        </div>
-      </form>
-    </div>
+    <a class="done-link" href="${href}">${coverHtml(d)}<h3>${esc(d.title)}</h3></a>
+    <a class="btn ghost sm" href="${href}/review">후기 남기기</a>
   </article>`;
 }
+const BACK = '<a class="btn ghost sm back" href="#">← 목록으로</a>';
+// 진행 중인 책 상세 (#book/<isbn>): 신청/취소는 여기서
+function bookPage(b, max) {
+  const left = max - b.readers;
+  return `<section class="page">
+    ${BACK}
+    <div class="page-head">${coverHtml(b)}
+      <div class="meta"><span class="field">${esc(b.field)}</span><h2>${esc(b.title)}</h2>
+        <span class="author">${esc(b.author)}${b.publisher ? ' · ' + esc(b.publisher) : ''}</span></div></div>
+    <div class="prog">
+      <div class="bar" role="img" aria-label="참여 ${max}명 중 ${b.readers}명"><div style="width:${(b.readers / max) * 100}%"></div></div>
+      <span><b>참여 ${b.readers}/${max}명</b> · ${left > 0 ? `완주까지 ${left}명` : '완주!'}</span>
+    </div>
+    <div class="memo"><b>${b.memo ? '책갈피 카드 최근 메모' : '메모 없음'}</b><span>${esc(b.memo || '아직 메모가 없어요. 첫 번째 독자가 되어주세요')}</span></div>
+    <div class="action">${joinArea(b, max)}</div>
+  </section>`;
+}
+// 완주한 책 상세 (#done/<id>, 후기 남기기 버튼은 #done/<id>/review → 입력칸 포커스)
+function donePage(d, max) {
+  return `<section class="page">
+    ${BACK}
+    <div class="page-head">${coverHtml(d)}
+      <div class="meta"><span class="field">${esc(d.field)}</span><h2>${esc(d.title)}</h2>
+        <span class="author">${esc(d.author)} · ${max}/${max}명 릴레이 완주 · ${esc(d.doneDate)}</span></div></div>
+    <h3>후기 ${d.reviews.length}개</h3>
+    ${d.reviews.map((r) => `<div class="review"><b>${esc(r.nick)}</b><span>${esc(r.text)}</span></div>`).join('') || '<div class="status">아직 후기가 없어요. 첫 후기를 남겨주세요</div>'}
+    <form data-id="${esc(d.id)}">
+      <label for="t-${esc(d.id)}">후기 남기기</label>
+      <div class="review-fields">
+        <input class="nick" name="nick" placeholder="닉네임" aria-label="닉네임" maxlength="20">
+        <input class="text" id="t-${esc(d.id)}" name="text" placeholder="이어 읽은 소감을 한 줄로" maxlength="200" required>
+        <button type="submit" class="btn">등록</button>
+      </div>
+    </form>
+  </section>`;
+}
+// 상세로 가면 맨 위, 완주한 책 상세에서 돌아오면 완주한 책 섹션으로
+window.addEventListener('hashchange', (e) => {
+  render();
+  const list = !location.hash && e.oldURL.includes('#done/') && document.querySelector('.done-list');
+  setTimeout(() => (list ? list.scrollIntoView() : window.scrollTo(0, 0))); // '#' 링크의 기본 맨 위 스크롤 뒤에 실행
+});
 
 function render() {
   if (!data) return;
@@ -210,9 +225,20 @@ function render() {
   const now = data.now.filter(match), done = data.done.filter(match);
 
   const head = (t, n) => `<h2 class="sec">${t} <span>${n}권</span></h2>`;
-  document.getElementById('sub').textContent = `메모 카드로 이어 읽는 교환독서 · 지금 ${now.length}권이 이어 읽히는 중 · 책에 마우스를 올려보세요`;
+  const [, kind, id, review] = location.hash.match(/^#(book|done)\/([^/]+)(\/review)?$/) || [];
+  const key = id && decodeURIComponent(id);
+  const book = kind === 'book' && data.now.find((b) => b.isbn === key);
+  const page = kind === 'done' && data.done.find((d) => d.id === key);
+  if (book || page) {
+    document.getElementById('sub').textContent = '메모 카드로 이어 읽는 교환독서';
+    document.getElementById('list-now').innerHTML = book ? bookPage(book, data.relayMax) : donePage(page, data.relayMax);
+    loadCovers();
+    if (review) document.getElementById('t-' + page.id).focus();
+    return;
+  }
+  document.getElementById('sub').textContent = `메모 카드로 이어 읽는 교환독서 · 지금 ${now.length}권이 이어 읽히는 중 · 책을 눌러 자세히 보고 신청하세요`;
   document.getElementById('list-now').innerHTML = (now.length ? shelf(now) : `<div class="status">진행 중인 책이 없어요.</div>`)
-    + (done.length ? `<section class="done-list">${head('완주한 책', done.length)}${carousel(done.map((d) => doneCard(d, data.relayMax)).join(''), 'done')}</section>` : '');
+    + (done.length ? `<section class="done-list">${head('완주한 책', done.length)}${carousel(done.map(doneCard).join(''), 'done')}</section>` : '');
   loadCovers();
   updateNav();
 }
@@ -229,6 +255,7 @@ function updateNav() {
     const tr = c.querySelector('.track'); const [prev, next] = c.querySelectorAll('.nav button');
     prev.disabled = tr.scrollLeft <= 2;
     next.disabled = tr.scrollLeft + tr.clientWidth >= tr.scrollWidth - 2;
+    c.querySelector('.nav').hidden = prev.disabled && next.disabled; // 넘길 게 없으면 화살표 숨김
   }
 }
 document.addEventListener('scroll', (e) => { if (e.target.classList && e.target.classList.contains('track')) updateNav(); }, true);
@@ -245,60 +272,51 @@ function bubble(b, max, i, n) {
     <span class="bar" role="img" aria-label="참여 ${max}명 중 ${b.readers}명"><span style="width:${(b.readers / max) * 100}%"></span></span>
     <span class="p"><b>참여 ${b.readers}/${max}명</b> · ${left > 0 ? `완주까지 ${left}명` : '완주!'}</span>
     <span class="s">${status}</span>
-    ${joinBtn(b, max)}
+    ${b.joined ? '<span class="go">✓ 신청했어요 · 책을 눌러 안내 보기</span>'
+      : b.readers < max ? `<button type="button" class="btn sm" data-join="${esc(b.isbn)}">신청하기</button>` : ''}
   </span>`;
 }
 // 교환독서 신청: 이 브라우저에만 저장 (프로토타입)
 // ponytail: localStorage라 내 화면에서만 +1, 실제 운영은 서버 저장소/대출 시스템 연동
 const JOIN_KEY = 'gachi-joined';
 const joined = new Set(JSON.parse(localStorage.getItem(JOIN_KEY) || '[]'));
-let justJoined = '';
 function applyJoined(b, max) {
   b.base ??= b.readers; // API가 준 원래 인원
   b.joined = joined.has(b.isbn);
   b.readers = Math.min(b.base + (b.joined ? 1 : 0), max);
 }
-function joinBtn(b, max) {
-  if (b.joined) return `<span class="ok">신청 완료 · ${b.due ? '반납되면 이어 읽어요' : '대출 창구에서 받아가세요'}</span>
-    ${justJoined === b.isbn ? '<span class="s">책에 꽂힌 책갈피 카드 빈 칸에 한 줄 메모를 남기고 다음 사람에게 넘겨주세요.</span>' : ''}
-    <button type="button" class="join cancel" data-join="${esc(b.isbn)}">신청 취소</button>`;
-  if (b.readers >= max) return `<button type="button" class="join" disabled>릴레이 완주한 책이에요</button>`;
-  return `<button type="button" class="join" data-join="${esc(b.isbn)}">이 책 읽을래요</button>`;
+function joinArea(b, max) {
+  const wait = b.due ? `지금은 대출 중이에요 (반납 예정 ${esc(b.due)})` : '';
+  if (b.joined) return `<span class="done-msg">✓ 신청 완료</span>
+    <p>${b.due ? `${wait} · <b>대기 ${esc(b.queue + 1)}번째</b>예요. 반납되면 이어 읽어요.` : '학산도서관 대출 창구에서 책을 받아가세요.'}</p>
+    <p>다 읽으면 책에 꽂힌 책갈피 카드 빈 칸에 한 줄 메모를 남기고 다음 사람에게 넘겨주세요.</p>
+    <button type="button" class="btn ghost sm" data-join="${esc(b.isbn)}">신청 취소</button>`;
+  if (b.readers >= max) return `<p>릴레이가 완주된 책이에요. 완주한 책에서 후기를 볼 수 있어요.</p>`;
+  return `<button type="button" class="btn" data-join="${esc(b.isbn)}">신청하기</button>
+    <p>${b.due ? `${wait} · 신청하면 대기 ${esc(b.queue + 1)}번째가 돼요.` : '지금 대출 가능해요. 신청하고 대출 창구에서 받아가세요.'}</p>`;
 }
 function join(isbn) {
-  if (joined.has(isbn)) { if (!confirm('교환독서 신청을 취소할까요?')) return; joined.delete(isbn); justJoined = ''; }
-  else { joined.add(isbn); justJoined = isbn; }
+  if (joined.has(isbn)) { if (!confirm('교환독서 신청을 취소할까요?')) return; joined.delete(isbn); }
+  else joined.add(isbn);
   localStorage.setItem(JOIN_KEY, JSON.stringify([...joined]));
   data.now.forEach((b) => applyJoined(b, data.relayMax));
   render();
 }
 function shelf(books) {
   return `<div class="shelf">
-    <div class="row" role="listbox" tabindex="0" aria-label="지금 읽는 중인 책 (마우스를 올리거나 ← → 키로 이동)">
-      ${books.map((b, i) => `<div class="pick" role="option" tabindex="0" data-sel="${i}" aria-selected="${i === ui.sel}" aria-label="${esc(b.title)}">${coverHtml(b)}${bubble(b, data.relayMax, i, books.length)}</div>`).join('')}
+    <div class="row" aria-label="지금 읽는 중인 책 (← → 키로 이동, Enter로 열기)">
+      ${books.map((b, i) => `<div class="pick${i === ui.sel ? ' on' : ''}" data-sel="${i}"><a class="pick-link" href="#book/${encodeURIComponent(b.isbn)}" aria-label="${esc(b.title)}${b.joined ? ' (신청함)' : ''}">${coverHtml(b)}</a>${bubble(b, data.relayMax, i, books.length)}</div>`).join('')}
     </div></div>`;
-}
-function detail(b, max) {
-  const left = max - b.readers;
-  const status = b.due ? `대출 중 (반납 예정 ${esc(b.due)})` : '대출 가능';
-  return `<section class="detail" aria-live="polite">
-    <span class="field">${esc(b.field)}</span>
-    <h2>${esc(b.title)}</h2>
-    <span class="author">${esc(b.author)}${b.publisher ? ' · ' + esc(b.publisher) : ''}</span>
-    <div class="prog">
-      <div class="bar" role="img" aria-label="참여 ${max}명 중 ${b.readers}명"><div style="width:${(b.readers / max) * 100}%"></div></div>
-      <span><b>참여 ${b.readers}/${max}명</b> · ${left > 0 ? `완주까지 ${left}명` : '완주!'} · ${status}</span>
-    </div>
-  </section>`;
 }
 function select(i) {
   if (!data || i === ui.sel) return;
   ui.sel = i;
-  document.querySelectorAll('.pick').forEach((el, k) => el.setAttribute('aria-selected', String(k === i)));
+  document.querySelectorAll('.pick').forEach((el, k) => el.classList.toggle('on', k === i));
 }
 function move(d) {
   const n = data.now.length; if (!n) return;
   select(ui.sel < 0 ? (d > 0 ? 0 : n - 1) : (ui.sel + d + n) % n);
+  document.querySelectorAll('.pick-link')[ui.sel]?.focus();
 }
 
 const coverUrls = {};
@@ -321,7 +339,6 @@ async function loadCovers() {
 
 document.addEventListener('click', (e) => {
   const j = e.target.closest('[data-join]'); if (j) { join(j.dataset.join); return; }
-  const p = e.target.closest('[data-sel]'); if (p) { select(Number(p.dataset.sel)); return; }
   if (!e.target.closest('.row')) select(-1);
   const m = e.target.closest('[data-move]'); if (m) { move(Number(m.dataset.move)); return; }
   const a = e.target.closest('[data-dir]');
