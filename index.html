@@ -35,6 +35,7 @@
   .pick .cover { width:100%; border-radius:6px 22px 22px 6px; padding:24px 20px 24px 30px; box-shadow:inset 10px 0 0 rgba(0,47,106,.08), 3px 4px 0 var(--line); transform-origin:bottom center; transform:scale(1); opacity:.55; transition:transform .35s ease, opacity .35s ease; }
   .pick .cover .t { font-size:20px; text-align:left; }
   .pick .cover .a { font-size:13px; text-align:left; }
+  .pick .cover .joined-badge { position:absolute; z-index:1; top:10px; right:10px; padding:4px 8px; border-radius:999px; background:var(--point); color:var(--navy); font-size:12px; font-weight:700; }
   .pick[aria-selected="true"] .cover { transform:scale(1.12); opacity:1; }
   .pick .dot { width:8px; height:8px; border-radius:999px; background:var(--blue); opacity:0; transition:opacity .35s ease; }
   .pick[aria-selected="true"] .dot { opacity:1; }
@@ -74,6 +75,7 @@
   .badge.ok { color:var(--blue); background:#D6E6FA; }
   .badge.loan { color:var(--sub); background:#F1F3F5; }
   .done { border:1px solid var(--line); border-radius:14px; padding:20px; display:flex; flex-wrap:wrap; gap:20px; }
+  .done-list { width:100%; margin-top:48px; text-align:left; }
   .done .cover { flex:0 0 104px; height:140px; aspect-ratio:auto; border-radius:3px 12px 12px 3px; padding:12px 12px 12px 18px; }
   .done .cover .t { font-size:13px; }
   .done .body { flex:999 1 240px; min-width:0; display:flex; flex-direction:column; gap:12px; }
@@ -85,6 +87,7 @@
   input { min-height:44px; padding:0 12px; border:1px solid #CDD4DC; border-radius:6px; font:inherit; font-size:14px; color:var(--ink); }
   input.nick { flex:0 1 120px; min-width:0; }
   input.text { flex:1 1 200px; min-width:0; }
+  .review-fields { display:flex; gap:8px; }
   form button { min-height:44px; padding:0 16px; border:0; border-radius:6px; background:var(--blue); color:#fff; font:inherit; font-size:14px; font-weight:700; cursor:pointer; }
   .status { padding:24px; border-radius:10px; background:var(--soft); color:var(--sub); font-size:15px; line-height:1.6; }
   footer { border-top:1px solid var(--line); padding-top:20px; font-size:13px; line-height:1.6; color:var(--sub); display:flex; flex-direction:column; gap:6px; }
@@ -126,6 +129,11 @@
   .bubble .bar > span { display:block; height:100%; background:var(--blue); border-radius:999px; }
   .bubble .p { font-size:13px; } .bubble .p b { color:var(--navy); }
   .bubble .s { font-size:13px; color:var(--sub); }
+  .bubble::after { content:''; position:absolute; left:0; right:0; top:-20px; height:20px; } /* 표지→말풍선 사이 틈에서 선택 풀리지 않게 */
+  .join { margin-top:8px; min-height:40px; border:0; border-radius:8px; background:var(--blue); color:#fff; font:inherit; font-size:14px; font-weight:700; cursor:pointer; }
+  .join:disabled { background:#D6E6FA; color:var(--blue); cursor:default; }
+  .join.cancel { background:#fff; color:var(--sub); border:1px solid var(--line); font-weight:500; }
+  .bubble .ok { margin-top:8px; font-size:13px; font-weight:700; color:var(--blue); }
   @media (max-width:600px){ .bubble{ width:220px; } }
 </style>
 </head>
@@ -142,7 +150,7 @@
   <section id="list-now"><div class="status">국립중앙도서관 사서추천도서를 불러오는 중…</div></section>
   <footer>
     <span>도서 정보: 국립중앙도서관 사서추천도서 Open API · 표지: 국중도 서지정보 API, 없으면 카카오 책 검색 API, 구글 북스 API (모두 없으면 제목으로 표시)</span>
-    <span>참여 인원·대출 상태는 예시 데이터입니다.</span>
+    <span>참여 인원·대출 상태와 완주 후기는 예시 데이터이며, 교환독서 신청과 새 완주 후기는 이 브라우저에만 저장됩니다.</span>
     <span>이 페이지는 학산도서관 서비스 아이디어 공모전 제안용 프로토타입이며, 도서관 공식 서비스가 아닙니다.</span>
   </footer>
 </main>
@@ -157,7 +165,7 @@ const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&':'&amp;', '<
 function coverHtml(b, small) {
   // 표지 이미지는 나중에 /api/cover로 채움. 없으면 제목 표지 그대로.
   return `<div class="cover" ${b.isbn ? `data-isbn="${esc(b.isbn)}"` : ''} aria-hidden="true">
-    <span class="t">${esc(b.title)}</span><span class="a">${esc(b.author)}</span></div>`;
+    ${b.joined ? '<span class="joined-badge">신청함</span>' : ''}<span class="t">${esc(b.title)}</span><span class="a">${esc(b.author)}</span></div>`;
 }
 
 function nowCard(b, max) {
@@ -186,7 +194,7 @@ function doneCard(d, max) {
       </div>
       <form data-id="${esc(d.id)}">
         <label for="t-${esc(d.id)}">후기 남기기</label>
-        <div class="row">
+        <div class="review-fields">
           <input class="nick" name="nick" placeholder="닉네임" aria-label="닉네임" maxlength="20">
           <input class="text" id="t-${esc(d.id)}" name="text" placeholder="이어 읽은 소감을 한 줄로" maxlength="200" required>
           <button type="submit">등록</button>
@@ -203,7 +211,8 @@ function render() {
 
   const head = (t, n) => `<h2 class="sec">${t} <span>${n}권</span></h2>`;
   document.getElementById('sub').textContent = `메모 카드로 이어 읽는 교환독서 · 지금 ${now.length}권이 이어 읽히는 중 · 책에 마우스를 올려보세요`;
-  document.getElementById('list-now').innerHTML = (now.length ? shelf(now) : `<div class="status">진행 중인 책이 없어요.</div>`);
+  document.getElementById('list-now').innerHTML = (now.length ? shelf(now) : `<div class="status">진행 중인 책이 없어요.</div>`)
+    + (done.length ? `<section class="done-list">${head('완주한 책', done.length)}${carousel(done.map((d) => doneCard(d, data.relayMax)).join(''), 'done')}</section>` : '');
   loadCovers();
   updateNav();
 }
@@ -228,20 +237,45 @@ window.addEventListener('resize', updateNav);
 function bubble(b, max, i, n) {
   const pos = i === 0 ? 'first' : i === n - 1 ? 'last' : '';
   const left = max - b.readers;
-  const status = b.due ? `대출 중 (반납 예정 ${esc(b.due)})` : '대출 가능';
-  return `<span class="bubble ${pos}" role="tooltip">
+  const status = b.due ? `대출 중 (반납 예정 ${esc(b.due)})${b.joined ? ` · 대기 ${esc(b.queue + 1)}번째` : ''}` : '대출 가능';
+  return `<span class="bubble ${pos}">
     <span class="f">${esc(b.field)}</span>
     <span class="t2">${esc(b.title)}</span>
     <span class="au">${esc(b.author)}${b.publisher ? ' · ' + esc(b.publisher) : ''}</span>
     <span class="bar" role="img" aria-label="참여 ${max}명 중 ${b.readers}명"><span style="width:${(b.readers / max) * 100}%"></span></span>
     <span class="p"><b>참여 ${b.readers}/${max}명</b> · ${left > 0 ? `완주까지 ${left}명` : '완주!'}</span>
     <span class="s">${status}</span>
+    ${joinBtn(b, max)}
   </span>`;
+}
+// 교환독서 신청: 이 브라우저에만 저장 (프로토타입)
+// ponytail: localStorage라 내 화면에서만 +1, 실제 운영은 서버 저장소/대출 시스템 연동
+const JOIN_KEY = 'gachi-joined';
+const joined = new Set(JSON.parse(localStorage.getItem(JOIN_KEY) || '[]'));
+let justJoined = '';
+function applyJoined(b, max) {
+  b.base ??= b.readers; // API가 준 원래 인원
+  b.joined = joined.has(b.isbn);
+  b.readers = Math.min(b.base + (b.joined ? 1 : 0), max);
+}
+function joinBtn(b, max) {
+  if (b.joined) return `<span class="ok">신청 완료 · ${b.due ? '반납되면 이어 읽어요' : '대출 창구에서 받아가세요'}</span>
+    ${justJoined === b.isbn ? '<span class="s">책에 꽂힌 책갈피 카드 빈 칸에 한 줄 메모를 남기고 다음 사람에게 넘겨주세요.</span>' : ''}
+    <button type="button" class="join cancel" data-join="${esc(b.isbn)}">신청 취소</button>`;
+  if (b.readers >= max) return `<button type="button" class="join" disabled>릴레이 완주한 책이에요</button>`;
+  return `<button type="button" class="join" data-join="${esc(b.isbn)}">이 책 읽을래요</button>`;
+}
+function join(isbn) {
+  if (joined.has(isbn)) { if (!confirm('교환독서 신청을 취소할까요?')) return; joined.delete(isbn); justJoined = ''; }
+  else { joined.add(isbn); justJoined = isbn; }
+  localStorage.setItem(JOIN_KEY, JSON.stringify([...joined]));
+  data.now.forEach((b) => applyJoined(b, data.relayMax));
+  render();
 }
 function shelf(books) {
   return `<div class="shelf">
     <div class="row" role="listbox" tabindex="0" aria-label="지금 읽는 중인 책 (마우스를 올리거나 ← → 키로 이동)">
-      ${books.map((b, i) => `<button type="button" class="pick" role="option" data-sel="${i}" aria-selected="${i === ui.sel}" aria-label="${esc(b.title)}">${coverHtml(b)}${bubble(b, data.relayMax, i, books.length)}</button>`).join('')}
+      ${books.map((b, i) => `<div class="pick" role="option" tabindex="0" data-sel="${i}" aria-selected="${i === ui.sel}" aria-label="${esc(b.title)}">${coverHtml(b)}${bubble(b, data.relayMax, i, books.length)}</div>`).join('')}
     </div></div>`;
 }
 function detail(b, max) {
@@ -286,6 +320,7 @@ async function loadCovers() {
 }
 
 document.addEventListener('click', (e) => {
+  const j = e.target.closest('[data-join]'); if (j) { join(j.dataset.join); return; }
   const p = e.target.closest('[data-sel]'); if (p) { select(Number(p.dataset.sel)); return; }
   if (!e.target.closest('.row')) select(-1);
   const m = e.target.closest('[data-move]'); if (m) { move(Number(m.dataset.move)); return; }
@@ -312,21 +347,26 @@ document.addEventListener('touchend', (e) => {
   const dx = e.changedTouches[0].clientX - touchX; touchX = null;
   if (Math.abs(dx) > 40) move(dx < 0 ? 1 : -1);
 });
-document.addEventListener('submit', async (e) => {
+const REVIEW_KEY = 'gachi-reviews';
+const savedReviews = JSON.parse(localStorage.getItem(REVIEW_KEY) || '{}');
+document.addEventListener('submit', (e) => {
   const form = e.target.closest('form[data-id]'); if (!form) return;
   e.preventDefault();
-  const body = { nick: form.nick.value, text: form.text.value };
-  const res = await fetch(`/api/done/${form.dataset.id}/reviews`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-  const json = await res.json();
-  if (!res.ok) return alert(json.error || '등록 실패');
-  data.done.find((d) => d.id === form.dataset.id).reviews = json.reviews;
+  const text = form.text.value.trim(); if (!text) return;
+  const review = { nick: form.nick.value.trim() || '익명', text };
+  (savedReviews[form.dataset.id] ||= []).push(review);
+  localStorage.setItem(REVIEW_KEY, JSON.stringify(savedReviews));
+  data.done.find((d) => d.id === form.dataset.id).reviews.push(review);
   render();
 });
 
 fetch('/api/books').then(async (res) => {
   const json = await res.json();
   if (!res.ok) throw new Error(json.error);
-  data = json; render();
+  data = json;
+  data.now.forEach((b) => applyJoined(b, data.relayMax));
+  data.done.forEach((d) => d.reviews.push(...(savedReviews[d.id] || [])));
+  render();
 }).catch((err) => {
   document.getElementById('list-now').innerHTML = `<div class="status">도서를 불러오지 못했어요: ${esc(err.message)}<br>Vercel 환경 변수 NL_API_KEY와 함수 로그를 확인해 주세요.</div>`;
 });
