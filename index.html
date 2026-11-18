@@ -18,11 +18,14 @@
   :root { --blue:#0A4A9B; --navy:#002F6A; --ink:#2F2F32; --sub:#5F6368; --line:#E6E9ED; --soft:#F7F8FA; --cover:#F1F4F8; --point:#FDB31E; }
   * { box-sizing: border-box; }
   body { margin:0; background:#fff; color:var(--ink); font-family:'S-CoreDream',system-ui,sans-serif; word-break:keep-all; overflow-wrap:anywhere; } /* 한국어는 단어 중간에서 줄바꿈 안 함 */
-  header { border-bottom:1px solid var(--line); }
+  header { position:sticky; top:0; z-index:20; background:#fff; border-bottom:1px solid var(--line); } /* 스크롤해도 '베타' 표시가 늘 보이게 */
   .wrap { max-width:1200px; margin:0 auto; padding:0 32px; }
   .top { display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; padding:18px 32px; }
   .brand { display:flex; align-items:center; gap:10px; font-size:18px; font-weight:700; color:var(--navy); letter-spacing:-0.02em; }
   .brand img { width:51px; height:30px; object-fit:contain; }
+  @media (max-width:480px){ .brand{font-size:16px; gap:8px; white-space:nowrap} .beta-long{display:none} .top{flex-wrap:nowrap} } /* 폰: 한 줄에 '베타'만 */
+  @media (max-width:340px){ .brand{font-size:15px} .brand img{width:44px} }
+  .beta { padding:4px 10px; border:1px solid #F3C56B; border-radius:999px; background:#FFF7E6; color:#9A5B00; font-size:13px; font-weight:700; white-space:nowrap; }
   main { max-width:1200px; margin:0 auto; padding:56px 32px 64px; display:flex; flex-direction:column; align-items:center; text-align:center; }
   main > h1, footer { width:100%; max-width:1200px; margin-left:auto; margin-right:auto; }
   #list-now { width:100%; display:flex; flex-direction:column; align-items:center; }
@@ -164,6 +167,7 @@
     <img src="/inu-logo.png" alt="">
     인천대학교 학산도서관
   </div>
+  <span class="beta" title="공모전 제안 프로토타입입니다">베타<span class="beta-long"> · 공모전 프로토타입</span></span>
 </div></header>
 
 <main>
