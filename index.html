@@ -3,7 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>가치 읽기 · 인천대학교 학산도서관</title>
+<title>가치 읽기 — 학산도서관 공모전 제안 프로토타입</title>
+<meta name="robots" content="noindex, noarchive, nosnippet">
+<meta name="description" content="학산도서관 서비스 아이디어 공모전 제안 「가치 읽기」의 프로토타입입니다. 학산도서관 공식 서비스가 아닙니다.">
+<meta property="og:title" content="가치 읽기 — 학산도서관 공모전 제안 프로토타입">
+<meta property="og:description" content="메모 카드로 이어 읽는 교환독서. 공모전 제안용 프로토타입이며 학산도서관 공식 서비스가 아닙니다.">
 <style>
   /* 인천대 홈페이지와 같은 에스코어드림 (무료 폰트, 눈누 CDN) */
   /* 에스코어드림은 획이 두꺼워서 한 단계씩 가볍게: 400→Light, 500→Regular, 600·700→Medium, 제목(800)만 Bold */
@@ -343,6 +347,7 @@ function mini(b, max) {
 }
 function select(i) {
   if (!data || i === ui.sel) return;
+  if (i < 0 && innerWidth <= 600) return; // 폰은 가운데 책이 항상 선택 상태 (바깥을 탭해도 제목·진행 막대 유지)
   ui.sel = i;
   document.querySelectorAll('.pick').forEach((el) => el.classList.toggle('on', Number(el.dataset.sel) === i));
 }
