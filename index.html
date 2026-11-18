@@ -3,33 +3,85 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>가치 읽기 · 인천대학교 학산도서관</title>
+<link rel="icon" href="/inu-logo.png">
+<title>가치 읽기 — 학산도서관 공모전 제안 프로토타입(비공식)</title>
+<meta name="robots" content="noindex, noarchive, nosnippet">
+<meta name="description" content="학산도서관 서비스 아이디어 공모전 제안 「가치 읽기」의 프로토타입입니다. 학산도서관 공식 서비스가 아닙니다.">
+<meta property="og:title" content="가치 읽기 — 학산도서관 공모전 제안 프로토타입(비공식)">
+<meta property="og:description" content="메모 카드로 이어 읽는 교환독서. 공모전 제안용 시안이며 학산도서관 공식 서비스가 아닙니다.">
+<meta property="og:type" content="website">
 <style>
-  /* 인천대 홈페이지와 같은 에스코어드림 (무료 폰트, 눈누 CDN) */
-  /* 에스코어드림은 획이 두꺼워서 한 단계씩 가볍게: 400→Light, 500→Regular, 600·700→Medium, 제목(800)만 Bold */
-  @font-face { font-family:'S-CoreDream'; font-weight:400; font-display:swap; src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-3Light.woff') format('woff'); }
-  @font-face { font-family:'S-CoreDream'; font-weight:500; font-display:swap; src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-4Regular.woff') format('woff'); }
-  @font-face { font-family:'S-CoreDream'; font-weight:600 700; font-display:swap; src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-5Medium.woff') format('woff'); }
-  @font-face { font-family:'S-CoreDream'; font-weight:800; font-display:swap; src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-6Bold.woff') format('woff'); }
-  :root { --blue:#0A4A9B; --navy:#002F6A; --ink:#2F2F32; --sub:#5F6368; --line:#E6E9ED; --soft:#F7F8FA; --cover:#F1F4F8; --point:#FDB31E; }
+  @font-face { font-family:'Noto Sans KR'; font-weight:300; font-display:swap; src:url('https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-kr@5.2.6/files/noto-sans-kr-korean-300-normal.woff2') format('woff2'); }
+  @font-face { font-family:'Noto Sans KR'; font-weight:400; font-display:swap; src:url('https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-kr@5.2.6/files/noto-sans-kr-korean-400-normal.woff2') format('woff2'); }
+  @font-face { font-family:'Noto Sans KR'; font-weight:500; font-display:swap; src:url('https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-kr@5.2.6/files/noto-sans-kr-korean-500-normal.woff2') format('woff2'); }
+  @font-face { font-family:'Noto Sans KR'; font-weight:700; font-display:swap; src:url('https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-kr@5.2.6/files/noto-sans-kr-korean-700-normal.woff2') format('woff2'); }
+  @font-face { font-family:'ONE Mobile Regular'; font-weight:400; font-display:swap; src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2105_2@1.0/ONE-Mobile-Regular.woff') format('woff'); }
+  @font-face { font-family:'ONE Mobile Title'; font-weight:400; font-display:swap; src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2105_2@1.0/ONE-Mobile-Title.woff') format('woff'); }
+  :root { --blue:#0A4A9B; --navy:#115592; --ink:#2F2F32; --sub:#5F6368; --line:#E6E9ED; --soft:#F7F8FA; --cover:#F1F4F8; --point:#FDB31E; }
   * { box-sizing: border-box; }
-  body { margin:0; background:#fff; color:var(--ink); font-family:'S-CoreDream',system-ui,sans-serif; word-break:keep-all; overflow-wrap:anywhere; } /* 한국어는 단어 중간에서 줄바꿈 안 함 */
-  header { border-bottom:1px solid var(--line); }
-  .wrap { max-width:1200px; margin:0 auto; padding:0 32px; }
-  .top { display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; padding:18px 32px; }
-  .brand { display:flex; align-items:center; gap:10px; font-size:18px; font-weight:700; color:var(--navy); letter-spacing:-0.02em; }
-  .brand img { width:51px; height:30px; object-fit:contain; }
-  main { padding:56px 48px 64px; display:flex; flex-direction:column; align-items:center; text-align:center; }
-  main > h1, footer { width:100%; max-width:1200px; margin-left:auto; margin-right:auto; }
-  #list-now { width:100%; display:flex; flex-direction:column; align-items:center; }
-  h1.title { margin:0; align-self:stretch; display:flex; flex-direction:column; align-items:flex-start; gap:8px; text-align:left; letter-spacing:-0.03em; }
-  h1.title span { font-size:40px; font-weight:800; color:var(--navy); }
-  h1.title small { font-size:17px; font-weight:500; color:var(--sub); }
-  .sec { margin:0; font-size:22px; letter-spacing:-0.02em; color:var(--navy); }
-  .sec span { font-size:16px; font-weight:500; color:var(--sub); }
-  .shelf { width:100%; display:flex; margin-top:24px; }
-  .row { flex:1 1 auto; min-width:0; display:flex; align-items:flex-end; gap:24px; padding:48px 0 0; outline:none; touch-action:pan-y; }
-  .row:focus-visible { box-shadow:0 0 0 2px var(--blue); border-radius:8px; }
+  body { margin:0; background:#fff; color:var(--ink); font-family:'Noto Sans KR',system-ui,sans-serif; font-size:16px; font-weight:400; word-break:keep-all; overflow-wrap:anywhere; } /* 한국어는 단어 중간에서 줄바꿈 안 함 */
+  a { color:inherit; text-decoration:none; }
+  svg.i { width:1em; height:1em; flex:0 0 auto; fill:currentColor; }
+  /* ── 학산도서관 서브 페이지 뼈대 (lib.inu.ac.kr 실측값: 헤더 84 · 메뉴 73 · 사이드바 270 · 본문 왼쪽 여백 40) ── */
+  .hd { position:relative; height:84px; display:flex; align-items:center; padding:0 120px 0 20px; }
+  .brand { display:flex; align-items:center; gap:10px; font-size:30px; font-weight:500; color:#58595B; letter-spacing:-0.04em; }
+  .brand img { width:82px; height:48px; object-fit:contain; }
+  .draft { flex:0 0 auto; padding:3px 9px; border:1px solid currentColor; border-radius:3px; font-family:'Noto Sans KR',sans-serif; font-size:13px; font-weight:500; line-height:1.4; letter-spacing:0; white-space:nowrap; }
+  .hd .draft { margin-left:14px; color:#B26B00; background:#FFF7E6; border-color:#F3C56B; }
+  .hd .univ { margin-left:auto; font-size:17px; color:#35373A; }
+  .hd .home { position:absolute; top:0; right:0; z-index:2; width:80px; height:104px; padding-bottom:20px; display:grid; place-items:center; background:var(--point); color:#fff; font-size:34px; clip-path:polygon(0 0, 100% 0, 100% 100%, 50% 82%, 0 100%); }
+  .gnb { height:73px; display:flex; align-items:center; gap:clamp(28px, 5vw, 100px); padding:0 100px 0 clamp(20px, 8vw, 114px); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+  .gnb a { font-size:23px; font-weight:500; line-height:71px; color:#35373A; white-space:nowrap; }
+  .gnb a:hover, .gnb a.on { color:var(--blue); }
+  .notice { display:flex; align-items:center; gap:16px; min-height:62px; padding:10px 20px 10px 32px; background:rgba(253,179,30,.75); font-size:20px; color:#231F20; }
+  .notice p { margin:0; flex:1; }
+  .notice button { border:0; background:none; font:inherit; font-size:15px; color:#35373A; cursor:pointer; display:flex; align-items:center; gap:8px; min-height:40px; }
+  .notice button svg { font-size:28px; }
+  .notice[hidden] { display:none; }
+  .mbar { display:none; }
+  .lib-body { display:flex; align-items:flex-start; max-width:1440px; margin:0 auto; padding:45px 20px 0; }
+  .snb { flex:0 0 270px; font-family:'ONE Mobile Regular','Noto Sans KR',sans-serif; font-size:17px; }
+  .snb-title { position:relative; height:125px; display:grid; place-items:center; overflow:hidden; margin:0; background:var(--blue); color:#fff; font-family:'ONE Mobile Title','Noto Sans KR',sans-serif; font-size:27px; font-weight:400; }
+  .snb-title .wm { position:absolute; left:-6px; top:50%; transform:translateY(-50%); font-size:150px; letter-spacing:-0.05em; color:rgba(0,0,0,.12); pointer-events:none; }
+  .snb-title b { position:relative; font-weight:400; }
+  .snb-title::before, .snb-title::after { content:''; position:absolute; width:12px; height:12px; border:0 solid var(--point); }
+  .snb-title::before { top:20px; right:62px; border-top-width:4px; border-right-width:4px; } /* 노란 꺾쇠 ┐ */
+  .snb-title::after { bottom:24px; left:56px; border-bottom-width:4px; border-left-width:4px; } /* 노란 꺾쇠 └ */
+  .snb ul { list-style:none; margin:0; padding:0; }
+  .snb strong { display:flex; align-items:center; justify-content:space-between; padding:19px 14px 14px 17px; border-bottom:1px solid #EBECEC; font-weight:500; color:#231F20; }
+  .snb strong svg { font-size:24px; color:#9B9DA0; }
+  .snb strong.on { background:#EEF3FA; color:var(--blue); }
+  .snb li a { position:relative; display:block; padding:15px 14px 10px 38px; border-bottom:1px solid #EBECEC; line-height:19px; color:#2F2F32; }
+  .snb li a::before { content:''; position:absolute; left:17px; top:18px; width:9px; height:9px; border:2px solid #D5D5D6; box-sizing:border-box; }
+  .snb li a:hover, .snb li a.on { color:var(--blue); }
+  .snb li a.on { font-weight:500; } .snb li a.on::before { border-color:var(--blue); }
+  main { flex:1; min-width:0; padding:0 0 100px 40px; display:flex; flex-direction:column; text-align:left; }
+  .crumb { display:flex; flex-wrap:wrap; align-items:center; gap:4px; min-height:24px; margin:-3px 0 0; padding:0; list-style:none; font-size:16px; color:#35373A; }
+  .crumb li { display:flex; align-items:center; gap:4px; }
+  .crumb li + li::before { content:''; width:7px; height:7px; margin:0 6px 0 2px; border-top:1.5px solid #9B9DA0; border-right:1.5px solid #9B9DA0; transform:rotate(45deg); }
+  .crumb li:last-child { color:var(--blue); }
+  .crumb svg { font-size:22px; color:#9B9DA0; }
+  h1.title { margin:12px 0 0; padding-left:4px; font-family:'ONE Mobile Title','Noto Sans KR',sans-serif; font-size:39px; line-height:1.5; font-weight:400; color:#231F20; }
+  .lead { margin:4px 0 0 4px; font-size:16px; line-height:1.6; color:var(--sub); }
+  #list-now { width:100%; display:flex; flex-direction:column; align-items:flex-start; } /* 학산도서관처럼 본문은 왼쪽 정렬 */
+  @media (max-width:1023px){
+    .lib-top, .snb { display:none; }
+    .mbar { position:sticky; top:0; z-index:10; display:flex; align-items:center; gap:8px; height:65px; padding:0 8px; background:var(--navy); color:#fff; }
+    .mbar a { width:44px; height:44px; display:grid; place-items:center; font-size:26px; }
+    .mbar .draft { font-size:11px; padding:2px 6px; color:#fff; border-color:rgba(255,255,255,.6); }
+    .mbar b { flex:1; min-width:0; font-size:21px; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .notice { min-height:0; padding:10px 8px 10px 16px; font-size:14px; }
+    .notice button span { display:none; }
+    .lib-body { padding:24px 16px 0; }
+    main { padding:0 0 48px; }
+    .crumb, h1.title, .page > .back { display:none; } /* 폰: 제목·뒤로가기는 파란 바에 (학산도서관 모바일과 같음) */
+    .lead { margin:0; }
+  }
+  .sec { margin:0; padding-left:12px; border-left:4px solid var(--point); font-family:'ONE Mobile Title','Noto Sans KR',sans-serif; font-size:26px; line-height:1.35; font-weight:400; letter-spacing:-0.02em; color:var(--navy); }
+  .sec span { font-family:'Noto Sans KR',sans-serif; font-size:15px; font-weight:400; color:var(--sub); }
+  .shelf { width:100%; display:flex; margin-top:40px; }
+  .row { flex:1 1 auto; min-width:0; display:flex; align-items:flex-end; gap:24px; padding:0; outline:none; touch-action:pan-y; }
+  .row:focus-visible { box-shadow:0 0 0 2px var(--blue); border-radius:5px; }
   .pick { position:relative; flex:1 1 0; min-width:0; padding:0; border:0; background:none; cursor:pointer; color:inherit; text-decoration:none; display:flex; flex-direction:column; align-items:center; gap:14px; font:inherit; }
   .pick[data-clone] { display:none; }
   .pick .cover { width:100%; border-radius:6px 22px 22px 6px; padding:24px 20px 24px 30px; box-shadow:inset 10px 0 0 rgba(0,47,106,.08), 3px 4px 0 var(--line); transform-origin:bottom center; transform:scale(1); transition:transform .35s ease, opacity .35s ease; }
@@ -44,7 +96,7 @@
   .track .done { width:150px; } /* 지금 읽는 책보다 작게 */
   .nav { display:flex; align-items:center; gap:8px; justify-content:flex-end; margin-bottom:8px; }
   .nav span { margin-right:auto; font-size:13px; color:var(--sub); }
-  .nav button { width:44px; height:44px; border-radius:999px; border:1px solid var(--line); background:#fff; color:var(--navy); cursor:pointer; display:grid; place-items:center; }
+  .nav button { width:44px; height:44px; border-radius:4px; border:1px solid var(--line); background:#fff; color:var(--navy); cursor:pointer; display:grid; place-items:center; }
   .nav button:disabled { opacity:.35; cursor:default; }
   .cover { position:relative; aspect-ratio:3/4; border-radius:4px 16px 16px 4px; overflow:hidden; border:1px solid var(--line); border-top:4px solid var(--point); background:var(--cover); color:var(--navy); box-shadow:inset 8px 0 0 rgba(0,47,106,.08), 2px 3px 0 var(--line); padding:18px 16px 18px 24px; display:flex; flex-direction:column; justify-content:space-between; }
   .cover img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
@@ -56,7 +108,7 @@
   .meta { display:flex; flex-direction:column; gap:4px; }
   .bar { display:block; height:6px; border-radius:999px; background:var(--line); overflow:hidden; margin-top:6px; }
   .bar > span { display:block; height:100%; background:var(--blue); border-radius:999px; }
-  .memo { background:var(--soft); border-radius:10px; padding:10px 12px; display:flex; flex-direction:column; gap:4px; }
+  .memo { background:var(--soft); border-radius:5px; padding:10px 12px; display:flex; flex-direction:column; gap:4px; }
   .memo b { font-size:12px; color:var(--blue); }
   .memo span { font-size:13px; line-height:1.55; color:#35373A; }
   .done { display:flex; flex-direction:column; gap:12px; }
@@ -64,48 +116,48 @@
   .done-link { display:flex; flex-direction:column; gap:10px; color:inherit; text-decoration:none; }
   .done-link .cover:not(:has(img)) + h3 { display:none; } /* 제목 표지면 아래 제목 중복 생략 */
   /* 버튼: 파란 버튼(.btn) / 테두리 버튼(.btn.ghost), 작은 크기(.sm) */
-  .btn { display:inline-flex; align-items:center; justify-content:center; gap:6px; min-height:48px; padding:0 22px; border:1px solid var(--blue); border-radius:10px; background:var(--blue); color:#fff; font:inherit; font-size:15px; font-weight:700; text-decoration:none; white-space:nowrap; cursor:pointer; transition:background .15s, border-color .15s, transform .1s; }
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:6px; min-height:48px; padding:0 22px; border:1px solid var(--blue); border-radius:4px; background:var(--blue); color:#fff; font:inherit; font-size:15px; font-weight:500; text-decoration:none; white-space:nowrap; cursor:pointer; transition:background .15s, border-color .15s, transform .1s; }
   .btn:hover { background:var(--navy); border-color:var(--navy); }
   .btn:active { transform:translateY(1px); }
   .btn:focus-visible, .pick-link:focus-visible { outline:3px solid rgba(10,74,155,.35); outline-offset:2px; }
   .btn.ghost { background:#fff; color:var(--navy); border-color:#CDD4DC; }
   .btn.ghost:hover { background:var(--soft); border-color:var(--navy); }
-  .btn.sm { min-height:40px; padding:0 14px; font-size:14px; font-weight:600; border-radius:8px; }
-  .page { width:100%; max-width:640px; margin-top:32px; display:flex; flex-direction:column; gap:18px; text-align:left; animation:fadeUp .25s ease; }
+  .btn.sm { min-height:40px; padding:0 14px; font-size:14px; font-weight:500; border-radius:4px; }
+  .page { width:100%; max-width:640px; margin-top:40px; display:flex; flex-direction:column; gap:18px; text-align:left; animation:fadeUp .25s ease; }
   .page > .back { align-self:flex-start; }
   .page-head { display:flex; gap:24px; align-items:flex-end; }
   .page-head .cover { flex:0 0 140px; }
-  .page-head h2 { margin:4px 0; font-size:26px; line-height:1.3; color:var(--navy); letter-spacing:-0.02em; }
+  .page-head h2 { margin:4px 0; font-family:'ONE Mobile Title','Noto Sans KR',sans-serif; font-size:26px; line-height:1.3; font-weight:400; color:var(--navy); letter-spacing:-0.02em; }
   .page .prog { display:flex; flex-direction:column; gap:8px; font-size:14px; } .page .prog b { color:var(--navy); }
   .slots { list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(10, minmax(0, 1fr)); gap:6px; }
   @media (max-width:420px){ .slots { grid-template-columns:repeat(5, minmax(0, 1fr)); } } /* 좁은 폰: 5칸×2줄 */
-  .slots li { aspect-ratio:1; border-radius:8px; border:1px dashed #CDD4DC; display:grid; place-items:center; font-size:12px; font-weight:700; color:var(--sub); }
+  .slots li { aspect-ratio:1; border-radius:4px; border:1px dashed #CDD4DC; display:grid; place-items:center; font-size:12px; font-weight:700; color:var(--sub); }
   .slots li.on { border:0; background:var(--blue); color:#fff; }
   .slots li.next { border:2px solid var(--point); color:var(--navy); font-size:11px; }
-  .action { display:flex; flex-direction:column; gap:10px; padding:20px; border:1px solid var(--line); border-radius:14px; }
+  .action { display:flex; flex-direction:column; gap:10px; padding:20px; border:1px solid var(--line); border-radius:5px; }
   .action .btn { align-self:stretch; } .action .btn.ghost { align-self:flex-start; }
   .action p { margin:0; font-size:14px; line-height:1.6; color:var(--sub); }
   .action .done-msg { font-size:16px; font-weight:700; color:var(--blue); }
-  .done-list { width:100%; margin-top:64px; text-align:left; }
+  .done-list { width:100%; margin-top:40px; text-align:left; }
   .done-list .sec { margin-bottom:8px; }
   .nav[hidden] { display:none; }
-  .review { background:var(--soft); border-radius:10px; padding:10px 12px; }
+  .review { background:var(--soft); border-radius:5px; padding:10px 12px; }
   .review b { display:block; font-size:12px; color:var(--sub); }
   .review span { font-size:14px; line-height:1.55; color:#35373A; }
   form { display:flex; flex-direction:column; gap:8px; }
   form label { font-size:13px; font-weight:500; }
-  input { min-height:44px; padding:0 12px; border:1px solid #CDD4DC; border-radius:6px; font:inherit; font-size:14px; color:var(--ink); }
+  input { min-height:44px; padding:0 12px; border:1px solid #CDD4DC; border-radius:5px; font:inherit; font-size:14px; color:var(--ink); }
   input.nick { flex:0 1 120px; min-width:0; }
   input.text { flex:1 1 200px; min-width:0; }
   .review-fields { display:flex; flex-wrap:wrap; gap:8px; }
-  .status { padding:24px; border-radius:10px; background:var(--soft); color:var(--sub); font-size:15px; line-height:1.6; }
-  footer { margin-top:56px; border-top:1px solid var(--line); padding-top:20px; font-size:13px; line-height:1.6; color:var(--sub); display:flex; flex-direction:column; gap:4px; text-align:left; }
+  .status { padding:24px; border-radius:5px; background:var(--soft); color:var(--sub); font-size:15px; line-height:1.6; }
+  footer { margin-top:40px; border-top:1px solid var(--line); padding-top:20px; font-size:13px; line-height:1.6; color:var(--sub); display:flex; flex-direction:column; gap:4px; text-align:left; }
   footer summary { width:max-content; color:var(--blue); font-weight:600; cursor:pointer; }
   footer details div { margin-top:6px; display:flex; flex-direction:column; gap:4px; }
   @keyframes fadeUp { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
-  @media (max-width:600px){ .top{padding:18px 20px} main{padding:40px 16px 48px} h1.title span{font-size:30px} .pick .cover .t{font-size:16px} .page-head h2{font-size:22px} .page-head .cover{flex-basis:110px} }
+  @media (max-width:600px){ .pick .cover .t{font-size:16px}.page-head h2{font-size:22px}.page-head .cover{flex-basis:110px} }
   .pick-link { display:block; width:100%; color:inherit; text-decoration:none; }
-  .bubble { position:absolute; top:calc(100% + 18px); left:50%; transform:translateX(-50%); z-index:5; width:280px; padding:16px 18px; border-radius:14px; background:#fff; border:1px solid var(--line); box-shadow:0 8px 24px rgba(0,47,106,.12); display:none; flex-direction:column; gap:6px; text-align:left; }
+  .bubble { position:absolute; top:calc(100% + 18px); left:50%; transform:translateX(-50%); z-index:5; width:280px; padding:16px 18px; border-radius:5px; background:#fff; border:1px solid var(--line); box-shadow:none; display:none; flex-direction:column; gap:6px; text-align:left; }
   .bubble::before { content:''; position:absolute; top:-7px; left:50%; width:12px; height:12px; background:#fff; border-left:1px solid var(--line); border-top:1px solid var(--line); transform:translateX(-50%) rotate(45deg); }
   .bubble.first { left:0; transform:none; } .bubble.first::before { left:36%; }
   .bubble.last { left:auto; right:0; transform:none; } .bubble.last::before { left:64%; }
@@ -118,10 +170,10 @@
   .bubble .s { font-size:13px; color:var(--sub); }
   .bubble .go { margin-top:6px; padding-top:10px; border-top:1px solid var(--line); font-size:13px; font-weight:700; color:var(--blue); }
   .bubble .btn { margin-top:6px; }
-  .wish-list { width:100%; margin-top:64px; text-align:left; display:flex; flex-direction:column; gap:12px; }
+  .wish-list { width:100%; margin-top:40px; text-align:left; display:flex; flex-direction:column; gap:12px; }
   .wish-list .sec span { display:block; margin-top:4px; }
   .wish-list ul { list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:12px; }
-  .wish { display:flex; gap:16px; align-items:flex-end; justify-content:space-between; padding:16px 18px; border:1px solid var(--line); border-radius:14px; }
+  .wish { display:flex; gap:16px; align-items:flex-end; justify-content:space-between; padding:16px 18px; border:1px solid var(--line); border-radius:5px; }
   .wish > div { flex:1; min-width:0; display:flex; flex-direction:column; gap:6px; align-self:stretch; }
   .wish > div > .bar { margin-top:auto; } /* 제목은 위, 진행 막대는 아래로 맞춤 */
   .wish b { color:var(--navy); } .wish p { margin:0; font-size:14px; color:#35373A; }
@@ -130,7 +182,7 @@
   .wish-more { align-self:center; }
   .wish-msg { margin:0; font-size:14px; color:var(--blue); font-weight:600; }
   .mini { width:100%; display:flex; flex-direction:column; gap:6px; text-align:left; margin-top:6px; }
-  .mini .mt { font-size:14px; font-weight:700; color:var(--navy); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .mini .mt { font-size:14px; line-height:1.4; font-weight:500; color:var(--navy); }
   .mini .bar { height:4px; margin:0; }
   .mini .mp { font-size:12px; color:var(--sub); } .mini .mp b { color:var(--navy); }
   .bubble::after { content:''; position:absolute; left:0; right:0; top:-20px; height:20px; } /* 표지→말풍선 사이 틈에서 선택 풀리지 않게 */
@@ -140,7 +192,6 @@
     .pick { flex:0 0 64vw; scroll-snap-align:center; scroll-snap-stop:always; }
     .pick.on .cover { transform:none; } /* 폰에선 확대 대신 양옆 책을 흐리게만 → ] [] [ 모양이 잘 보이게 */
     .pick[data-clone] { display:flex; }
-    .mini .mt { overflow:visible; text-overflow:clip; }
     .mini .mp { white-space:nowrap; }
     .pick:not(.on) .mini { opacity:0; }
     .bubble { display:none !important; }
@@ -155,15 +206,50 @@
 </style>
 </head>
 <body>
-<header><div class="wrap top">
-  <div class="brand">
-    <img src="/inu-logo.png" alt="">
-    인천대학교 학산도서관
-  </div>
-</div></header>
+<!-- 학산도서관 서브 페이지 모양. 메뉴·사이드바 링크는 모두 실제 학산도서관 페이지로 연결 -->
+<div class="lib-top">
+  <header class="hd">
+    <a class="brand" href="https://lib.inu.ac.kr/"><img src="/inu-logo.png" alt="INU">인천대학교 학산도서관</a>
+    <span class="draft">공모전 제안 시안 · 비공식</span>
+    <a class="univ" href="https://www.inu.ac.kr/">인천대학교</a>
+    <a class="home" href="https://lib.inu.ac.kr/" title="학산도서관 홈페이지"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg></a>
+  </header>
+  <nav class="gnb" aria-label="학산도서관 메뉴">
+    <a href="https://lib.inu.ac.kr/search/i-discovery">자료검색</a>
+    <a href="https://lib.inu.ac.kr/research/professional-serivce">연구학습지원</a>
+    <a href="https://lib.inu.ac.kr/library-services/acq" class="on">도서관 서비스</a>
+    <a href="https://lib.inu.ac.kr/ik-collections/new-arriaval-collections">컬렉션</a>
+    <a href="https://lib.inu.ac.kr/library-guide/introduction/about">도서관 안내</a>
+    <a href="https://lib.inu.ac.kr/mylibrary/dashboard">My Library</a>
+  </nav>
+</div>
+<div class="mbar">
+  <a id="m-back" href="https://lib.inu.ac.kr/library-services/acq" aria-label="뒤로"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11H7.8l5.6-5.6L12 4l-8 8 8 8 1.4-1.4L7.8 13H20z"/></svg></a>
+  <b id="m-title">가치 읽기</b>
+  <span class="draft">제안 시안</span>
+  <a href="https://lib.inu.ac.kr/" aria-label="학산도서관 홈페이지"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg></a>
+</div>
+<div class="notice" id="notice">
+  <p>「가치 읽기」는 학산도서관 서비스 아이디어 공모전 제안 프로토타입입니다.</p>
+  <button type="button" id="notice-close"><span>오늘 하루 보지 않기</span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 6.4 17.6 5 12 10.6 6.4 5 5 6.4 10.6 12 5 17.6 6.4 19 12 13.4 17.6 19 19 17.6 13.4 12z"/></svg></button>
+</div>
 
+<div class="lib-body">
+  <nav class="snb" aria-label="도서관 서비스 메뉴">
+    <h2 class="snb-title"><span class="wm" aria-hidden="true">INU</span><b>도서관 서비스</b></h2>
+    <strong class="on"><span>함께 읽기 <small>(제안)</small></span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.4 8.6 12 13.2l4.6-4.6L18 10l-6 6-6-6z"/></svg></strong>
+    <ul><li><a class="on" href="#" aria-current="page">가치 읽기</a></li></ul>
+    <strong>도서관서비스<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.4 8.6 12 13.2l4.6-4.6L18 10l-6 6-6-6z"/></svg></strong>
+    <ul><li><a href="https://lib.inu.ac.kr/library-services/acq">희망도서 신청</a></li><li><a href="https://lib.inu.ac.kr/library-services/dept-acq">학과도서 신청</a></li><li><a href="https://lib.inu.ac.kr/library-services/book-delivery-guide">책배달 서비스</a></li><li><a href="https://lib.inu.ac.kr/library-services/smuf">시설/공간 예약</a></li></ul>
+    <strong>협력기관자료 이용<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.4 8.6 12 13.2l4.6-4.6L18 10l-6 6-6-6z"/></svg></strong>
+    <ul><li><a href="https://lib.inu.ac.kr/library-services/nl-guide">국립중앙도서관/국회도서관 자료이용</a></li><li><a href="https://lib.inu.ac.kr/library-services/olv-guide">타대학 열람의뢰</a></li></ul>
+    <strong>도서 한줄평/복사<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.4 8.6 12 13.2l4.6-4.6L18 10l-6 6-6-6z"/></svg></strong>
+    <ul><li><a href="https://lib.inu.ac.kr/library-services/latest-reviewed-biblio">도서 한줄평</a></li><li><a href="https://lib.inu.ac.kr/library-services/copy">복사/스캔/프린트/Wifi</a></li></ul>
+  </nav>
 <main>
-  <h1 class="title"><span>가치 읽기</span><small>메모 카드로 이어 읽는 교환독서</small></h1>
+  <ol class="crumb" id="crumb"></ol>
+  <h1 class="title">가치 읽기</h1>
+  <p class="lead">메모 카드로 이어 읽는 교환독서</p>
   <section id="list-now"><div class="status">국립중앙도서관 사서추천도서를 불러오는 중…</div></section>
   <footer>
     <span>참여 인원·대출 상태와 완주 후기는 예시 데이터이며, 학산도서관 공식 서비스가 아닌 공모전 제안용 프로토타입입니다.</span>
@@ -173,6 +259,7 @@
     </div></details>
   </footer>
 </main>
+</div>
 
 <script>
 const ui = { sel: -1, wishAll: false, wishMsg: '' };
@@ -237,6 +324,23 @@ window.addEventListener('hashchange', (e) => {
   setTimeout(() => (list ? list.scrollIntoView() : window.scrollTo(0, 0))); // '#' 링크의 기본 맨 위 스크롤 뒤에 실행
 });
 
+// 경로·휴대폰 상단 바: 목록이면 '가치 읽기', 상세면 책 제목까지
+const LIB = 'https://lib.inu.ac.kr';
+const HOME_ICON = '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>';
+function setNav(detail) {
+  document.getElementById('crumb').innerHTML = `<li><a href="${LIB}/">${HOME_ICON}<span>홈</span></a></li>
+    <li><a href="${LIB}/library-services/acq">도서관 서비스</a></li>
+    <li>${detail ? '<a href="#">가치 읽기</a>' : '가치 읽기'}</li>${detail ? `<li>${esc(detail)}</li>` : ''}`;
+  document.getElementById('m-title').textContent = detail || '가치 읽기';
+  document.getElementById('m-back').href = detail ? '#' : LIB + '/library-services/acq';
+}
+// 노란 공지 띠: '오늘 하루 보지 않기'
+const NOTICE_KEY = 'gachi-notice-hidden';
+const today = new Date().toDateString();
+if (localStorage.getItem(NOTICE_KEY) === today) document.getElementById('notice').hidden = true;
+document.getElementById('notice-close').onclick = () => { localStorage.setItem(NOTICE_KEY, today); document.getElementById('notice').hidden = true; };
+setNav(''); // 데이터 오기 전에도 경로 표시
+
 function render() {
   if (!data) return;
   const { now, done } = data;
@@ -245,6 +349,7 @@ function render() {
   const key = id && decodeURIComponent(id);
   const book = kind === 'book' && data.now.find((b) => b.isbn === key);
   const page = kind === 'done' && data.done.find((d) => d.id === key);
+  setNav(book ? book.title : page ? page.title : '');
   if (book || page) {
     document.getElementById('list-now').innerHTML = book ? bookPage(book, data.relayMax) : donePage(page, data.relayMax);
     loadCovers();
@@ -343,6 +448,7 @@ function mini(b, max) {
 }
 function select(i) {
   if (!data || i === ui.sel) return;
+  if (i < 0 && innerWidth <= 600) return; // 폰은 가운데 책이 항상 선택 상태 (바깥을 탭해도 제목·진행 막대 유지)
   ui.sel = i;
   document.querySelectorAll('.pick').forEach((el) => el.classList.toggle('on', Number(el.dataset.sel) === i));
 }
