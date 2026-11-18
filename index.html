@@ -13,7 +13,7 @@
   @font-face { font-family:'S-CoreDream'; font-weight:800; font-display:swap; src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-6Bold.woff') format('woff'); }
   :root { --blue:#0A4A9B; --navy:#002F6A; --ink:#2F2F32; --sub:#5F6368; --line:#E6E9ED; --soft:#F7F8FA; --cover:#F1F4F8; --point:#FDB31E; }
   * { box-sizing: border-box; }
-  body { margin:0; background:#fff; color:var(--ink); font-family:'S-CoreDream',system-ui,sans-serif; }
+  body { margin:0; background:#fff; color:var(--ink); font-family:'S-CoreDream',system-ui,sans-serif; word-break:keep-all; overflow-wrap:anywhere; } /* 한국어는 단어 중간에서 줄바꿈 안 함 */
   header { border-bottom:1px solid var(--line); }
   .wrap { max-width:1200px; margin:0 auto; padding:0 32px; }
   .top { display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; padding:18px 32px; }
@@ -442,7 +442,7 @@ function wishSection(list, max) {
       <div><b>${esc(w.title)}</b>${w.author ? ` <span class="author">${esc(w.author)}</span>` : ''}
         ${w.reason ? `<p>“${esc(w.reason)}”</p>` : ''}
         <span class="bar"><span style="width:${(n / max) * 100}%"></span></span>
-        <span class="mp"><b>${n}/${max}명</b> ${n >= max ? '· 다음 릴레이로 준비 중' : `· ${max - n}명 더 모이면 릴레이 시작`}</span></div>
+        <span class="mp"><b>${n}/${max}명</b> ${n >= max ? '· 다음 릴레이로 준비 중' : `· ${max - n}명 더 모이면 시작`}</span></div>
       ${mine ? `<button type="button" class="btn ghost sm" data-wish="${esc(w.id)}">✓ 신청함</button>`
         : n < max ? `<button type="button" class="btn sm" data-wish="${esc(w.id)}">나도 읽을래요</button>` : ''}
     </li>`;
