@@ -6,6 +6,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import books from './api/books.js';
 import cover from './api/cover.js';
+import search from './api/search.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -31,6 +32,7 @@ http.createServer(async (req, res) => {
   req.query = Object.fromEntries(u.searchParams);
   if (u.pathname === '/api/books') return books(req, wrap(res));
   if (u.pathname === '/api/cover') return cover(req, wrap(res));
+  if (u.pathname === '/api/search') return search(req, wrap(res));
   if (u.pathname === '/inu-logo.png') {
     res.writeHead(200, { 'Content-Type': 'image/png' });
     return res.end(fs.readFileSync(path.join(__dirname, 'inu-logo.png')));
