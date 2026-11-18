@@ -4,50 +4,48 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>가치 읽기 · 인천대학교 학산도서관</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <style>
+  /* 인천대 홈페이지와 같은 에스코어드림 (무료 폰트, 눈누 CDN) */
+  /* 에스코어드림은 획이 두꺼워서 한 단계씩 가볍게: 400→Light, 500→Regular, 600·700→Medium, 제목(800)만 Bold */
+  @font-face { font-family:'S-CoreDream'; font-weight:400; font-display:swap; src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-3Light.woff') format('woff'); }
+  @font-face { font-family:'S-CoreDream'; font-weight:500; font-display:swap; src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-4Regular.woff') format('woff'); }
+  @font-face { font-family:'S-CoreDream'; font-weight:600 700; font-display:swap; src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-5Medium.woff') format('woff'); }
+  @font-face { font-family:'S-CoreDream'; font-weight:800; font-display:swap; src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-6Bold.woff') format('woff'); }
   :root { --blue:#0A4A9B; --navy:#002F6A; --ink:#2F2F32; --sub:#5F6368; --line:#E6E9ED; --soft:#F7F8FA; --cover:#F1F4F8; --point:#FDB31E; }
   * { box-sizing: border-box; }
-  body { margin:0; background:#fff; color:var(--ink); font-family:'Pretendard',system-ui,sans-serif; }
+  body { margin:0; background:#fff; color:var(--ink); font-family:'S-CoreDream',system-ui,sans-serif; word-break:keep-all; overflow-wrap:anywhere; } /* 한국어는 단어 중간에서 줄바꿈 안 함 */
   header { border-bottom:1px solid var(--line); }
   .wrap { max-width:1200px; margin:0 auto; padding:0 32px; }
-  .top { display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; padding:18px 0; }
+  .top { display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; padding:18px 32px; }
   .brand { display:flex; align-items:center; gap:10px; font-size:18px; font-weight:700; color:var(--navy); letter-spacing:-0.02em; }
-  .tag { font-size:13px; color:var(--sub); border:1px solid var(--line); border-radius:999px; padding:4px 12px; }
-  main { padding:48px 0 64px; display:flex; flex-direction:column; gap:32px; }
-  main > h1, .sec, footer { width:100%; max-width:1200px; margin-left:auto; margin-right:auto; padding-left:32px; padding-right:32px; }
-  #list-now { display:flex; flex-direction:column; gap:20px; }
-  .eyebrow { margin:0; font-size:14px; font-weight:700; color:var(--blue); }
-  h1.title { margin:0; display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 12px; letter-spacing:-0.03em; }
-  h1.title span { font-size:36px; font-weight:700; color:var(--navy); }
-  h1.title small { font-size:18px; font-weight:500; color:var(--sub); }
-  .lead { margin:0; max-width:640px; font-size:17px; line-height:1.7; color:#4D4F53; }
+  .brand img { width:51px; height:30px; object-fit:contain; }
+  main { padding:56px 48px 64px; display:flex; flex-direction:column; align-items:center; text-align:center; }
+  main > h1, footer { width:100%; max-width:1200px; margin-left:auto; margin-right:auto; }
+  #list-now { width:100%; display:flex; flex-direction:column; align-items:center; }
+  h1.title { margin:0; align-self:stretch; display:flex; flex-direction:column; align-items:flex-start; gap:8px; text-align:left; letter-spacing:-0.03em; }
+  h1.title span { font-size:40px; font-weight:800; color:var(--navy); }
+  h1.title small { font-size:17px; font-weight:500; color:var(--sub); }
   .sec { margin:0; font-size:22px; letter-spacing:-0.02em; color:var(--navy); }
   .sec span { font-size:16px; font-weight:500; color:var(--sub); }
-  .tabs { display:flex; gap:4px; border-bottom:1px solid var(--line); }
-  .tabs button { min-height:48px; padding:0 20px; border:0; border-bottom:3px solid transparent; margin-bottom:-1px; background:none; font:inherit; font-size:16px; color:var(--sub); cursor:pointer; }
-  .tabs button[aria-pressed="true"] { border-bottom-color:var(--blue); color:var(--blue); font-weight:700; }
-  .count { margin-left:auto; font-size:14px; color:var(--sub); }
-  .shelf { display:flex; align-items:center; gap:12px; padding:0 16px; }
-  .row { flex:1 1 auto; min-width:0; display:flex; align-items:flex-end; gap:24px; padding:56px 8px 8px; outline:none; touch-action:pan-y; }
+  .shelf { width:100%; display:flex; margin-top:24px; }
+  .row { flex:1 1 auto; min-width:0; display:flex; align-items:flex-end; gap:24px; padding:48px 0 0; outline:none; touch-action:pan-y; }
   .row:focus-visible { box-shadow:0 0 0 2px var(--blue); border-radius:8px; }
-  .pick { flex:1 1 0; min-width:0; padding:0; border:0; background:none; cursor:pointer; color:inherit; text-decoration:none; display:flex; flex-direction:column; align-items:center; gap:14px; font:inherit; }
-  .pick .cover { width:100%; border-radius:6px 22px 22px 6px; padding:24px 20px 24px 30px; box-shadow:inset 10px 0 0 rgba(0,47,106,.08), 3px 4px 0 var(--line); transform-origin:bottom center; transform:scale(1); opacity:.55; transition:transform .35s ease, opacity .35s ease; }
+  .pick { position:relative; flex:1 1 0; min-width:0; padding:0; border:0; background:none; cursor:pointer; color:inherit; text-decoration:none; display:flex; flex-direction:column; align-items:center; gap:14px; font:inherit; }
+  .pick[data-clone] { display:none; }
+  .pick .cover { width:100%; border-radius:6px 22px 22px 6px; padding:24px 20px 24px 30px; box-shadow:inset 10px 0 0 rgba(0,47,106,.08), 3px 4px 0 var(--line); transform-origin:bottom center; transform:scale(1); transition:transform .35s ease, opacity .35s ease; }
   .pick .cover .t { font-size:20px; text-align:left; }
   .pick .cover .a { font-size:13px; text-align:left; }
   .cover .joined-badge { position:absolute; z-index:1; top:10px; right:10px; padding:4px 8px; border-radius:999px; background:var(--point); color:var(--navy); font-size:12px; font-weight:700; }
-  .pick.on .cover { transform:scale(1.12); opacity:1; }
-  .arrow { flex:0 0 auto; width:44px; height:44px; border-radius:999px; border:1px solid var(--line); background:#fff; color:var(--navy); cursor:pointer; display:grid; place-items:center; }
+  .pick.on .cover { transform:scale(1.12); }
+  .row:has(.pick.on) .pick:not(.on) .cover { opacity:.55; } /* 하나 고르면 나머지만 흐리게 */
   .carousel { position:relative; }
   .track { display:flex; gap:24px; overflow-x:auto; scroll-snap-type:x mandatory; scroll-padding-left:2px; padding:4px 2px 16px; scrollbar-width:thin; -webkit-overflow-scrolling:touch; }
   .track > * { scroll-snap-align:start; flex:0 0 auto; }
-  .track .book { width:220px; }
-  .track .done { width:200px; }
+  .track .done { width:150px; } /* 지금 읽는 책보다 작게 */
   .nav { display:flex; align-items:center; gap:8px; justify-content:flex-end; margin-bottom:8px; }
   .nav span { margin-right:auto; font-size:13px; color:var(--sub); }
   .nav button { width:44px; height:44px; border-radius:999px; border:1px solid var(--line); background:#fff; color:var(--navy); cursor:pointer; display:grid; place-items:center; }
   .nav button:disabled { opacity:.35; cursor:default; }
-  .book { display:flex; flex-direction:column; gap:12px; }
   .cover { position:relative; aspect-ratio:3/4; border-radius:4px 16px 16px 4px; overflow:hidden; border:1px solid var(--line); border-top:4px solid var(--point); background:var(--cover); color:var(--navy); box-shadow:inset 8px 0 0 rgba(0,47,106,.08), 2px 3px 0 var(--line); padding:18px 16px 18px 24px; display:flex; flex-direction:column; justify-content:space-between; }
   .cover img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
   .cover .t { font-size:17px; line-height:1.4; font-weight:700; letter-spacing:-0.02em; }
@@ -56,18 +54,13 @@
   h3 { margin:0; font-size:16px; line-height:1.4; }
   .author { font-size:13px; color:var(--sub); }
   .meta { display:flex; flex-direction:column; gap:4px; }
-  .prog-row { display:flex; justify-content:space-between; align-items:baseline; font-size:13px; }
-  .prog-row b { color:var(--navy); }
-  .prog-row span { font-size:12px; color:var(--sub); }
-  .bar { height:6px; border-radius:999px; background:var(--line); overflow:hidden; margin-top:6px; }
-  .bar > div { height:100%; background:var(--blue); border-radius:999px; }
+  .bar { display:block; height:6px; border-radius:999px; background:var(--line); overflow:hidden; margin-top:6px; }
+  .bar > span { display:block; height:100%; background:var(--blue); border-radius:999px; }
   .memo { background:var(--soft); border-radius:10px; padding:10px 12px; display:flex; flex-direction:column; gap:4px; }
   .memo b { font-size:12px; color:var(--blue); }
   .memo span { font-size:13px; line-height:1.55; color:#35373A; }
-  .badge { align-self:flex-start; font-size:13px; font-weight:500; border-radius:4px; padding:4px 10px; }
-  .badge.ok { color:var(--blue); background:#D6E6FA; }
-  .badge.loan { color:var(--sub); background:#F1F3F5; }
   .done { display:flex; flex-direction:column; gap:12px; }
+  .done > .btn { margin-top:auto; } /* 제목이 두 줄이어도 버튼 높이 맞춤 */
   .done-link { display:flex; flex-direction:column; gap:10px; color:inherit; text-decoration:none; }
   .done-link .cover:not(:has(img)) + h3 { display:none; } /* 제목 표지면 아래 제목 중복 생략 */
   /* 버튼: 파란 버튼(.btn) / 테두리 버튼(.btn.ghost), 작은 크기(.sm) */
@@ -84,13 +77,17 @@
   .page-head .cover { flex:0 0 140px; }
   .page-head h2 { margin:4px 0; font-size:26px; line-height:1.3; color:var(--navy); letter-spacing:-0.02em; }
   .page .prog { display:flex; flex-direction:column; gap:8px; font-size:14px; } .page .prog b { color:var(--navy); }
-  .page .bar { margin:0; height:8px; }
+  .slots { list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(10, minmax(0, 1fr)); gap:6px; }
+  @media (max-width:420px){ .slots { grid-template-columns:repeat(5, minmax(0, 1fr)); } } /* 좁은 폰: 5칸×2줄 */
+  .slots li { aspect-ratio:1; border-radius:8px; border:1px dashed #CDD4DC; display:grid; place-items:center; font-size:12px; font-weight:700; color:var(--sub); }
+  .slots li.on { border:0; background:var(--blue); color:#fff; }
+  .slots li.next { border:2px solid var(--point); color:var(--navy); font-size:11px; }
   .action { display:flex; flex-direction:column; gap:10px; padding:20px; border:1px solid var(--line); border-radius:14px; }
   .action .btn { align-self:stretch; } .action .btn.ghost { align-self:flex-start; }
   .action p { margin:0; font-size:14px; line-height:1.6; color:var(--sub); }
   .action .done-msg { font-size:16px; font-weight:700; color:var(--blue); }
   .done-list { width:100%; margin-top:64px; text-align:left; }
-  .done-list .sec { padding:0; margin-bottom:8px; }
+  .done-list .sec { margin-bottom:8px; }
   .nav[hidden] { display:none; }
   .review { background:var(--soft); border-radius:10px; padding:10px 12px; }
   .review b { display:block; font-size:12px; color:var(--sub); }
@@ -102,22 +99,11 @@
   input.text { flex:1 1 200px; min-width:0; }
   .review-fields { display:flex; flex-wrap:wrap; gap:8px; }
   .status { padding:24px; border-radius:10px; background:var(--soft); color:var(--sub); font-size:15px; line-height:1.6; }
-  footer { border-top:1px solid var(--line); padding-top:20px; font-size:13px; line-height:1.6; color:var(--sub); display:flex; flex-direction:column; gap:6px; }
-  @media (max-width:600px){ h1.title span{font-size:28px} .wrap, main > h1, .sec, footer{padding-left:20px; padding-right:20px} .row{gap:10px} .pick .cover .t{font-size:16px} }
+  footer { margin-top:56px; border-top:1px solid var(--line); padding-top:20px; font-size:13px; line-height:1.6; color:var(--sub); display:flex; flex-direction:column; gap:4px; text-align:left; }
+  footer summary { width:max-content; color:var(--blue); font-weight:600; cursor:pointer; }
+  footer details div { margin-top:6px; display:flex; flex-direction:column; gap:4px; }
   @keyframes fadeUp { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
-  /* 가운데 한 축 레이아웃 */
-  main { padding:56px 48px 64px; display:flex; flex-direction:column; align-items:center; gap:0; text-align:center; }
-  main > h1, footer { padding-left:0; padding-right:0; }
-  h1.title { align-self:stretch; padding-left:0; flex-direction:column; align-items:flex-start; gap:8px; text-align:left; }
-  h1.title span { font-size:40px; }
-  h1.title small { font-size:17px; }
-  #list-now { width:100%; display:flex; flex-direction:column; align-items:center; gap:0; }
-  .shelf { width:100%; padding:0; margin-top:24px; }
-  .arrow { width:48px; height:48px; }
-  .row { padding:48px 0 0; }
-  footer { width:100%; max-width:760px; margin-top:56px; gap:4px; }
-  @media (max-width:600px){ main{padding:40px 16px 48px} h1.title span{font-size:30px} .arrow{width:40px;height:40px} .shelf{gap:6px} .page-head h2{font-size:22px} .page-head .cover{flex-basis:110px} }
-  .pick { position:relative; }
+  @media (max-width:600px){ .top{padding:18px 20px} main{padding:40px 16px 48px} h1.title span{font-size:30px} .pick .cover .t{font-size:16px} .page-head h2{font-size:22px} .page-head .cover{flex-basis:110px} }
   .pick-link { display:block; width:100%; color:inherit; text-decoration:none; }
   .bubble { position:absolute; top:calc(100% + 18px); left:50%; transform:translateX(-50%); z-index:5; width:280px; padding:16px 18px; border-radius:14px; background:#fff; border:1px solid var(--line); box-shadow:0 8px 24px rgba(0,47,106,.12); display:none; flex-direction:column; gap:6px; text-align:left; }
   .bubble::before { content:''; position:absolute; top:-7px; left:50%; width:12px; height:12px; background:#fff; border-left:1px solid var(--line); border-top:1px solid var(--line); transform:translateX(-50%) rotate(45deg); }
@@ -128,42 +114,73 @@
   .bubble .f { font-size:12px; font-weight:700; color:var(--blue); }
   .bubble .t2 { font-size:17px; line-height:1.35; font-weight:700; color:var(--navy); }
   .bubble .au { font-size:13px; color:var(--sub); }
-  .bubble .bar { display:block; height:6px; margin-top:6px; }
-  .bubble .bar > span { display:block; height:100%; background:var(--blue); border-radius:999px; }
   .bubble .p { font-size:13px; } .bubble .p b { color:var(--navy); }
   .bubble .s { font-size:13px; color:var(--sub); }
   .bubble .go { margin-top:6px; padding-top:10px; border-top:1px solid var(--line); font-size:13px; font-weight:700; color:var(--blue); }
   .bubble .btn { margin-top:6px; }
+  .wish-list { width:100%; margin-top:64px; text-align:left; display:flex; flex-direction:column; gap:12px; }
+  .wish-list .sec span { display:block; margin-top:4px; }
+  .wish-list ul { list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:12px; }
+  .wish { display:flex; gap:16px; align-items:flex-end; justify-content:space-between; padding:16px 18px; border:1px solid var(--line); border-radius:14px; }
+  .wish > div { flex:1; min-width:0; display:flex; flex-direction:column; gap:6px; align-self:stretch; }
+  .wish > div > .bar { margin-top:auto; } /* 제목은 위, 진행 막대는 아래로 맞춤 */
+  .wish b { color:var(--navy); } .wish p { margin:0; font-size:14px; color:#35373A; }
+  .wish .bar { height:4px; margin:4px 0 0; } .wish .bar > span { background:var(--point); }
+  .wish .mp { font-size:12px; color:var(--sub); }
+  .wish-more { align-self:center; }
+  .wish-msg { margin:0; font-size:14px; color:var(--blue); font-weight:600; }
+  .mini { width:100%; display:flex; flex-direction:column; gap:6px; text-align:left; margin-top:6px; }
+  .mini .mt { font-size:14px; font-weight:700; color:var(--navy); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .mini .bar { height:4px; margin:0; }
+  .mini .mp { font-size:12px; color:var(--sub); } .mini .mp b { color:var(--navy); }
   .bubble::after { content:''; position:absolute; left:0; right:0; top:-20px; height:20px; } /* 표지→말풍선 사이 틈에서 선택 풀리지 않게 */
-  @media (max-width:600px){ .bubble{ width:220px; } }
+  @media (max-width:600px){
+    .row { gap:16px; overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none; touch-action:pan-x pan-y; padding:24px calc((100% - 64vw)/2) 16px; }
+    .row::-webkit-scrollbar { display:none; }
+    .pick { flex:0 0 64vw; scroll-snap-align:center; scroll-snap-stop:always; }
+    .pick.on .cover { transform:none; } /* 폰에선 확대 대신 양옆 책을 흐리게만 → ] [] [ 모양이 잘 보이게 */
+    .pick[data-clone] { display:flex; }
+    .mini .mt { overflow:visible; text-overflow:clip; }
+    .mini .mp { white-space:nowrap; }
+    .pick:not(.on) .mini { opacity:0; }
+    .bubble { display:none !important; }
+    .wish-list ul { grid-template-columns:minmax(0, 1fr); }
+    .wish { flex-direction:column; align-items:stretch; }
+    .wish .btn { width:100%; }
+    .wish-form .review-fields, form[data-id] .review-fields { flex-direction:column; }
+    .wish-form input, .wish-form .btn, form[data-id] input, form[data-id] .btn { width:100%; flex-basis:auto; }
+    input { font-size:16px; }
+  }
+  @media (max-width:932px) and (max-height:500px){ input { font-size:16px; } }
 </style>
 </head>
 <body>
 <header><div class="wrap top">
   <div class="brand">
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0A4A9B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5.5C5.5 4.5 8.5 4.5 12 6.5c3.5-2 6.5-2 9-1v13c-2.5-1-5.5-1-9 1-3.5-2-6.5-2-9-1z"/><path d="M12 6.5v13"/></svg>
+    <img src="/inu-logo.png" alt="">
     인천대학교 학산도서관
   </div>
 </div></header>
 
 <main>
-  <h1 class="title"><span>가치 읽기</span><small id="sub">메모 카드로 이어 읽는 교환독서</small></h1>
+  <h1 class="title"><span>가치 읽기</span><small>메모 카드로 이어 읽는 교환독서</small></h1>
   <section id="list-now"><div class="status">국립중앙도서관 사서추천도서를 불러오는 중…</div></section>
   <footer>
-    <span>도서 정보: 국립중앙도서관 사서추천도서 Open API · 표지: 국중도 서지정보 API, 없으면 카카오 책 검색 API, 구글 북스 API (모두 없으면 제목으로 표시)</span>
-    <span>참여 인원·대출 상태와 완주 후기는 예시 데이터이며, 교환독서 신청과 새 완주 후기는 이 브라우저에만 저장됩니다.</span>
-    <span>이 페이지는 학산도서관 서비스 아이디어 공모전 제안용 프로토타입이며, 도서관 공식 서비스가 아닙니다.</span>
+    <span>참여 인원·대출 상태와 완주 후기는 예시 데이터이며, 학산도서관 공식 서비스가 아닌 공모전 제안용 프로토타입입니다.</span>
+    <details><summary>데이터 출처</summary><div>
+      <span>도서 정보: 국립중앙도서관 사서추천도서 Open API · 표지: 국중도 서지정보 API, 없으면 카카오 책 검색 API, 구글 북스 API (모두 없으면 제목으로 표시)</span>
+      <span>교환독서 신청과 새 완주 후기는 이 브라우저에만 저장됩니다.</span>
+    </div></details>
   </footer>
 </main>
 
 <script>
-const FIELDS = ['전체', '인문과학', '어문학', '사회과학', '자연과학', '기타'];
-const ui = { field: '전체', sel: -1 };
+const ui = { sel: -1, wishAll: false, wishMsg: '' };
 let data = null;
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
 
-function coverHtml(b, small) {
+function coverHtml(b) {
   // 표지 이미지는 나중에 /api/cover로 채움. 없으면 제목 표지 그대로.
   return `<div class="cover" ${b.isbn ? `data-isbn="${esc(b.isbn)}"` : ''} aria-hidden="true">
     ${b.joined ? '<span class="joined-badge">신청함</span>' : ''}<span class="t">${esc(b.title)}</span><span class="a">${esc(b.author)}</span></div>`;
@@ -186,8 +203,9 @@ function bookPage(b, max) {
       <div class="meta"><span class="field">${esc(b.field)}</span><h2>${esc(b.title)}</h2>
         <span class="author">${esc(b.author)}${b.publisher ? ' · ' + esc(b.publisher) : ''}</span></div></div>
     <div class="prog">
-      <div class="bar" role="img" aria-label="참여 ${max}명 중 ${b.readers}명"><div style="width:${(b.readers / max) * 100}%"></div></div>
-      <span><b>참여 ${b.readers}/${max}명</b> · ${left > 0 ? `완주까지 ${left}명` : '완주!'}</span>
+      <span><b>책갈피 카드 ${b.readers}/${max}칸</b> · ${left > 0 ? `완주까지 ${left}명` : '완주!'}</span>
+      <ol class="slots" aria-label="책갈피 카드 ${max}칸 중 ${b.readers}칸 채워짐">${Array.from({ length: max }, (_, i) =>
+        `<li class="${i < b.readers ? 'on' : i === b.readers ? 'next' : ''}">${i < b.readers ? i + 1 : i === b.readers ? '다음' : ''}</li>`).join('')}</ol>
     </div>
     <div class="memo"><b>${b.memo ? '책갈피 카드 최근 메모' : '메모 없음'}</b><span>${esc(b.memo || '아직 메모가 없어요. 첫 번째 독자가 되어주세요')}</span></div>
     <div class="action">${joinArea(b, max)}</div>
@@ -221,31 +239,29 @@ window.addEventListener('hashchange', (e) => {
 
 function render() {
   if (!data) return;
-  const match = (b) => ui.field === '전체' || b.field === ui.field;
-  const now = data.now.filter(match), done = data.done.filter(match);
-
+  const { now, done } = data;
   const head = (t, n) => `<h2 class="sec">${t} <span>${n}권</span></h2>`;
   const [, kind, id, review] = location.hash.match(/^#(book|done)\/([^/]+)(\/review)?$/) || [];
   const key = id && decodeURIComponent(id);
   const book = kind === 'book' && data.now.find((b) => b.isbn === key);
   const page = kind === 'done' && data.done.find((d) => d.id === key);
   if (book || page) {
-    document.getElementById('sub').textContent = '메모 카드로 이어 읽는 교환독서';
     document.getElementById('list-now').innerHTML = book ? bookPage(book, data.relayMax) : donePage(page, data.relayMax);
     loadCovers();
     if (review) document.getElementById('t-' + page.id).focus();
     return;
   }
-  document.getElementById('sub').textContent = `메모 카드로 이어 읽는 교환독서 · 지금 ${now.length}권이 이어 읽히는 중 · 책을 눌러 자세히 보고 신청하세요`;
   document.getElementById('list-now').innerHTML = (now.length ? shelf(now) : `<div class="status">진행 중인 책이 없어요.</div>`)
-    + (done.length ? `<section class="done-list">${head('완주한 책', done.length)}${carousel(done.map(doneCard).join(''), 'done')}</section>` : '');
+    + (done.length ? `<section class="done-list">${head('완주한 책', done.length)}${carousel(done.map(doneCard).join(''))}</section>` : '')
+    + wishSection(data.wish, data.relayMax);
   loadCovers();
   updateNav();
+  requestAnimationFrame(initMobileShelf);
 }
 
 const ARROW = (d) => `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${d}"/></svg>`;
-function carousel(cards, id) {
-  return `<div class="carousel" data-c="${id}"><div class="nav"><span>옆으로 넘겨서 더 보기</span>
+function carousel(cards) {
+  return `<div class="carousel"><div class="nav"><span>옆으로 넘겨서 더 보기</span>
     <button type="button" data-dir="-1" aria-label="이전 책">${ARROW('M15 18l-6-6 6-6')}</button>
     <button type="button" data-dir="1" aria-label="다음 책">${ARROW('M9 18l6-6-6-6')}</button></div>
     <div class="track" tabindex="0" aria-label="책 목록, 좌우로 스크롤">${cards}</div></div>`;
@@ -258,8 +274,17 @@ function updateNav() {
     c.querySelector('.nav').hidden = prev.disabled && next.disabled; // 넘길 게 없으면 화살표 숨김
   }
 }
-document.addEventListener('scroll', (e) => { if (e.target.classList && e.target.classList.contains('track')) updateNav(); }, true);
-window.addEventListener('resize', updateNav);
+let shelfScrollTimer;
+document.addEventListener('scroll', (e) => {
+  if (!e.target.classList) return;
+  if (e.target.classList.contains('track')) updateNav();
+  if (e.target.classList.contains('row')) {
+    syncMobileShelf(e.target);
+    clearTimeout(shelfScrollTimer);
+    shelfScrollTimer = setTimeout(() => settleMobileShelf(e.target), 160);
+  }
+}, true);
+window.addEventListener('resize', () => { updateNav(); initMobileShelf(); });
 
 function bubble(b, max, i, n) {
   const pos = i === 0 ? 'first' : i === n - 1 ? 'last' : '';
@@ -303,44 +328,79 @@ function join(isbn) {
   render();
 }
 function shelf(books) {
+  const card = (b, i, clone = '') => `<div class="pick${i === ui.sel ? ' on' : ''}" data-sel="${i}"${clone ? ` data-clone="${clone}" aria-hidden="true"` : ''}><a class="pick-link" href="#book/${encodeURIComponent(b.isbn)}"${clone ? ' tabindex="-1"' : ''} aria-label="${esc(b.title)}${b.joined ? ' (신청함)' : ''}">${coverHtml(b)}</a>${mini(b, data.relayMax)}${bubble(b, data.relayMax, i, books.length)}</div>`;
+  const loop = books.length > 1 ? card(books.at(-1), books.length - 1, 'before') : '';
   return `<div class="shelf">
     <div class="row" aria-label="지금 읽는 중인 책 (← → 키로 이동, Enter로 열기)">
-      ${books.map((b, i) => `<div class="pick${i === ui.sel ? ' on' : ''}" data-sel="${i}"><a class="pick-link" href="#book/${encodeURIComponent(b.isbn)}" aria-label="${esc(b.title)}${b.joined ? ' (신청함)' : ''}">${coverHtml(b)}</a>${bubble(b, data.relayMax, i, books.length)}</div>`).join('')}
+      ${loop}${books.map((b, i) => card(b, i)).join('')}${books.length > 1 ? card(books[0], 0, 'after') : ''}
     </div></div>`;
+}
+// 표지 아래 항상 보이는 요약: 제목 + 릴레이 진행
+function mini(b, max) {
+  return `<span class="mini"><span class="mt">${esc(b.title)}</span>
+    <span class="bar"><span style="width:${(b.readers / max) * 100}%"></span></span>
+    <span class="mp"><b>${b.readers}/${max}명</b>${max - b.readers <= 2 ? ' · 완주 임박' : ''}</span></span>`;
 }
 function select(i) {
   if (!data || i === ui.sel) return;
   ui.sel = i;
-  document.querySelectorAll('.pick').forEach((el, k) => el.classList.toggle('on', k === i));
+  document.querySelectorAll('.pick').forEach((el) => el.classList.toggle('on', Number(el.dataset.sel) === i));
+}
+// 모바일 책장: 가운데에 가장 가까운 책 (복제본 포함)
+function centerPick(row) {
+  const mid = (el) => el.getBoundingClientRect().left + el.offsetWidth / 2;
+  const center = row.getBoundingClientRect().left + row.clientWidth / 2;
+  return [...row.querySelectorAll('.pick')].reduce((best, el) => (Math.abs(mid(el) - center) < Math.abs(mid(best) - center) ? el : best));
+}
+function syncMobileShelf(row) {
+  if (innerWidth <= 600) select(Number(centerPick(row).dataset.sel));
+}
+// 끝과 처음 잇기: 복제본에서 멈추면 같은 책의 원본 위치로 몰래 이동
+function settleMobileShelf(row) {
+  if (innerWidth > 600) return;
+  const pick = centerPick(row);
+  if (!pick.dataset.clone) return;
+  const original = row.querySelector(`.pick[data-sel="${pick.dataset.sel}"]:not([data-clone])`);
+  row.scrollLeft += original.getBoundingClientRect().left - pick.getBoundingClientRect().left;
+}
+function initMobileShelf() {
+  const row = document.querySelector('.row');
+  if (innerWidth > 600) { if (row) row.scrollLeft = 0; return; }
+  const picks = [...(row?.querySelectorAll('.pick:not([data-clone])') || [])];
+  if (!picks.length) return;
+  const i = Math.min(ui.sel < 0 ? 0 : ui.sel, picks.length - 1); const pick = picks[i];
+  row.scrollLeft += pick.getBoundingClientRect().left + pick.offsetWidth / 2 - (row.getBoundingClientRect().left + row.clientWidth / 2);
+  select(i);
 }
 function move(d) {
   const n = data.now.length; if (!n) return;
   select(ui.sel < 0 ? (d > 0 ? 0 : n - 1) : (ui.sel + d + n) % n);
-  document.querySelectorAll('.pick-link')[ui.sel]?.focus();
+  document.querySelectorAll('.pick:not([data-clone]) .pick-link')[ui.sel]?.focus();
 }
 
+// 표지 주소 요청은 ISBN당 한 번, 모든 책을 동시에 (하나가 느려도 나머지는 먼저 뜸)
 const coverUrls = {};
-async function loadCovers() {
+function loadCovers() {
   for (const el of document.querySelectorAll('.cover[data-isbn]')) {
     const isbn = el.dataset.isbn;
-    if (!(isbn in coverUrls)) {
-      coverUrls[isbn] = '';
-      try { coverUrls[isbn] = (await (await fetch('/api/cover?isbn=' + isbn)).json()).url || ''; } catch {}
-    }
-    if (coverUrls[isbn] && !el.querySelector('img')) {
+    coverUrls[isbn] ??= fetch('/api/cover?isbn=' + isbn, { signal: AbortSignal.timeout(10000) })
+      .then((r) => r.json()).then((j) => j.url || '').catch(() => '');
+    coverUrls[isbn].then((url) => {
+      if (!url || el.querySelector('img')) return;
       const img = new Image();
       img.alt = '';
       img.onerror = () => img.remove(); // 깨진 표지는 제목 표지로
-      img.src = coverUrls[isbn];
+      img.src = url;
       el.appendChild(img);
-    }
+    });
   }
 }
 
 document.addEventListener('click', (e) => {
   const j = e.target.closest('[data-join]'); if (j) { join(j.dataset.join); return; }
+  const w = e.target.closest('[data-wish]'); if (w) { wish(w.dataset.wish); return; }
+  if (e.target.closest('[data-wish-all]')) { ui.wishAll = !ui.wishAll; render(); return; }
   if (!e.target.closest('.row')) select(-1);
-  const m = e.target.closest('[data-move]'); if (m) { move(Number(m.dataset.move)); return; }
   const a = e.target.closest('[data-dir]');
   if (a) { const tr = a.closest('.carousel').querySelector('.track'); const card = tr.firstElementChild;
     const step = card ? card.getBoundingClientRect().width + 24 : 240; // 카드 한 장 + 간격만큼
@@ -358,11 +418,72 @@ document.addEventListener('keydown', (e) => {
 });
 // 손가락으로 휙 넘기기: 40px 이상 밀면 한 칸 이동
 let touchX = null;
-document.addEventListener('touchstart', (e) => { if (e.target.closest('.row')) touchX = e.touches[0].clientX; }, { passive: true });
+document.addEventListener('touchstart', (e) => { if (innerWidth > 600 && e.target.closest('.row')) touchX = e.touches[0].clientX; }, { passive: true });
 document.addEventListener('touchend', (e) => {
+  if (innerWidth <= 600) { touchX = null; return; }
   if (touchX === null) return;
   const dx = e.changedTouches[0].clientX - touchX; touchX = null;
   if (Math.abs(dx) > 40) move(dx < 0 ? 1 : -1);
+});
+// 책 추천: 추천하면 내가 첫 신청자, 다른 사람은 "나도 읽을래요"로 신청. 정원이 차면 다음 릴레이 후보
+// ponytail: 이 브라우저에만 저장(신청·후기와 같음), 실제 운영은 서버 저장소 필요
+const WISH_KEY = 'gachi-wish';
+const wishSaved = JSON.parse(localStorage.getItem(WISH_KEY) || '{"added":[],"joined":[]}');
+const saveWish = () => localStorage.setItem(WISH_KEY, JSON.stringify(wishSaved));
+// 많이 모인 순(같으면 최근 추천 먼저), 기본 3권만 → 추천이 100권이어도 화면이 길어지지 않음
+const WISH_SHOW = 3;
+const wishCount = (w, max) => Math.min(w.votes + (wishSaved.joined.includes(w.id) ? 1 : 0), max);
+function wishSection(list, max) {
+  const sorted = list.map((w, i) => ({ w, i, n: wishCount(w, max) })).sort((a, b) => b.n - a.n || b.i - a.i);
+  const shown = ui.wishAll ? sorted : sorted.slice(0, WISH_SHOW);
+  const items = shown.map(({ w, n }) => {
+    const mine = wishSaved.joined.includes(w.id);
+    return `<li class="wish">
+      <div><b>${esc(w.title)}</b>${w.author ? ` <span class="author">${esc(w.author)}</span>` : ''}
+        ${w.reason ? `<p>“${esc(w.reason)}”</p>` : ''}
+        <span class="bar"><span style="width:${(n / max) * 100}%"></span></span>
+        <span class="mp"><b>${n}/${max}명</b> ${n >= max ? '· 다음 릴레이로 준비 중' : `· ${max - n}명 더 모이면 시작`}</span></div>
+      ${mine ? `<button type="button" class="btn ghost sm" data-wish="${esc(w.id)}">✓ 신청함</button>`
+        : n < max ? `<button type="button" class="btn sm" data-wish="${esc(w.id)}">나도 읽을래요</button>` : ''}
+    </li>`;
+  }).join('');
+  return `<section class="wish-list">
+    <h2 class="sec">다음에 같이 읽을 책 <span>읽고 싶은 책을 올리고, 같이 읽을 사람을 모아요</span></h2>
+    <form class="wish-form">
+      <div class="review-fields">
+        <input class="text" name="title" placeholder="읽고 싶은 책 제목" aria-label="책 제목" maxlength="60" required>
+        <input class="text" name="reason" placeholder="추천 한마디 (선택)" aria-label="추천 한마디" maxlength="80">
+        <button type="submit" class="btn">이 책 읽을래요</button>
+      </div>
+    </form>
+    ${ui.wishMsg ? `<p class="wish-msg" role="status">${esc(ui.wishMsg)}</p>` : ''}
+    <ul>${items}</ul>
+    ${list.length > WISH_SHOW ? `<button type="button" class="btn ghost sm wish-more" data-wish-all>${ui.wishAll ? '접기' : `추천 도서 ${list.length}권 모두 보기`}</button>` : ''}
+  </section>`;
+}
+function wish(id) {
+  const i = wishSaved.joined.indexOf(id);
+  if (i >= 0) { if (!confirm('이 책 신청을 취소할까요?')) return; wishSaved.joined.splice(i, 1); }
+  else wishSaved.joined.push(id);
+  saveWish(); render();
+}
+document.addEventListener('submit', (e) => {
+  const form = e.target.closest('.wish-form'); if (!form) return;
+  e.preventDefault();
+  const title = form.title.value.trim(); if (!title) return;
+  // 같은 책은 카드 하나로: 공백·대소문자만 무시하고 비교
+  const norm = (t) => t.replace(/\s+/g, '').toLowerCase();
+  const same = data.wish.find((w) => norm(w.title) === norm(title));
+  if (same) {
+    const already = wishSaved.joined.includes(same.id);
+    if (!already) { wishSaved.joined.push(same.id); saveWish(); }
+    ui.wishMsg = already ? `이미 신청한 책이에요: 「${same.title}」` : `이미 추천된 책이라 신청에 함께했어요: 「${same.title}」`;
+  } else {
+    const w = { id: 'my-' + Date.now(), title, reason: form.reason.value.trim(), votes: 0 };
+    wishSaved.added.push(w); wishSaved.joined.push(w.id); saveWish();
+    data.wish.push(w); ui.wishMsg = '';
+  }
+  render();
 });
 const REVIEW_KEY = 'gachi-reviews';
 const savedReviews = JSON.parse(localStorage.getItem(REVIEW_KEY) || '{}');
@@ -377,15 +498,17 @@ document.addEventListener('submit', (e) => {
   render();
 });
 
-fetch('/api/books').then(async (res) => {
+fetch('/api/books', { signal: AbortSignal.timeout(15000) }).then(async (res) => {
   const json = await res.json();
   if (!res.ok) throw new Error(json.error);
   data = json;
   data.now.forEach((b) => applyJoined(b, data.relayMax));
   data.done.forEach((d) => d.reviews.push(...(savedReviews[d.id] || [])));
+  data.wish = [...(data.wish || []), ...wishSaved.added];
   render();
 }).catch((err) => {
-  document.getElementById('list-now').innerHTML = `<div class="status">도서를 불러오지 못했어요: ${esc(err.message)}<br>Vercel 환경 변수 NL_API_KEY와 함수 로그를 확인해 주세요.</div>`;
+  console.log('도서 불러오기 실패:', err);
+  document.getElementById('list-now').innerHTML = `<div class="status">도서를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.<br><button type="button" class="btn sm" onclick="location.reload()" style="margin-top:12px">다시 불러오기</button></div>`;
 });
 </script>
 </body>
