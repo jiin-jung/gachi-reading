@@ -31,6 +31,10 @@ http.createServer(async (req, res) => {
   req.query = Object.fromEntries(u.searchParams);
   if (u.pathname === '/api/books') return books(req, wrap(res));
   if (u.pathname === '/api/cover') return cover(req, wrap(res));
+  if (u.pathname === '/inu-logo.png') {
+    res.writeHead(200, { 'Content-Type': 'image/png' });
+    return res.end(fs.readFileSync(path.join(__dirname, 'inu-logo.png')));
+  }
   if (u.pathname === '/' || u.pathname === '/index.html') {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
     return res.end(fs.readFileSync(path.join(__dirname, 'index.html')));

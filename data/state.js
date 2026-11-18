@@ -51,6 +51,14 @@ export default {
       "due": null
     }
   },
+  "wish": [
+    { "id": "wish-1", "title": "작별하지 않는다", "author": "한강", "reason": "소년이 온다 다음으로 이어 읽고 싶어요", "votes": 6 },
+    { "id": "wish-2", "title": "도둑맞은 집중력", "author": "요한 하리", "reason": "시험 기간에 다 같이 읽으면 좋을 듯", "votes": 3 },
+    { "id": "wish-3", "title": "이처럼 사소한 것들", "author": "클레어 키건", "reason": "얇아서 릴레이로 금방 돌 것 같아요", "votes": 8 },
+    { "id": "wish-4", "title": "코스모스", "author": "칼 세이건", "reason": "혼자선 못 끝낼 책, 같이 읽으면 가능!", "votes": 4 },
+    { "id": "wish-5", "title": "사피엔스", "author": "유발 하라리", "reason": "교양 과제랑 겹쳐서 메모 나누고 싶어요", "votes": 2 },
+    { "id": "wish-6", "title": "아몬드", "author": "손원평", "reason": "", "votes": 1 }
+  ],
   "done": [
     {
       "id": "done-1",
@@ -60,7 +68,8 @@ export default {
       "field": "어문학",
       "doneDate": "2026.10.28",
       "reviews": [
-        { "nick": "책갈피", "text": "앞사람의 메모를 따라 읽으니 혼자 읽을 때보다 오래 남았어요." }
+        { "nick": "책갈피", "text": "앞사람의 메모를 따라 읽으니 혼자 읽을 때보다 오래 남았어요." },
+        { "nick": "문장수집가", "text": "앞사람이 남긴 문장에서 멈춰 읽으니 같은 장면을 여러 번 생각하게 됐어요." }
       ]
     },
     {
