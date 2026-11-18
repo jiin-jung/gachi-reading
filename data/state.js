@@ -5,7 +5,10 @@ export default {
     "9788937428517": {
       "readers": 3,
       "memo": "p.87 둘째 문단 — 여기서 그림을 다시 찾아봤어요",
-      "due": null
+      "due": null,
+      "reviews": [
+        { "nick": "노란별", "text": "그림을 찾아보며 읽으니 한 장 한 장 오래 머물게 돼요. 다음 분도 꼭 그림 같이 보세요!" }
+      ]
     },
     "9791169093415": {
       "readers": 1,
@@ -17,12 +20,19 @@ export default {
       "readers": 8,
       "memo": "p.142 — 앞사람 메모에 반대! 저는 이해됐어요",
       "due": "11.18",
-      "queue": 3
+      "queue": 3,
+      "reviews": [
+        { "nick": "새벽독서", "text": "앞사람 메모에 답하듯 읽게 돼서 대화하는 느낌이었어요." },
+        { "nick": "익명", "text": "결말이 충격적이라 다음 사람 메모가 벌써 궁금해요." }
+      ]
     },
     "9791193078259": {
       "readers": 9,
       "memo": "p.61 마지막 줄 — 다음 분도 여기서 멈춰보세요",
-      "due": null
+      "due": null,
+      "reviews": [
+        { "nick": "빵칼", "text": "짧은데 오래 남는 소설. 메모 칸이 거의 다 차서 완주가 기대돼요." }
+      ]
     },
     "9791170872429": {
       "readers": 2,
@@ -52,12 +62,12 @@ export default {
     }
   },
   "wish": [
-    { "id": "wish-1", "title": "작별하지 않는다", "author": "한강", "reason": "소년이 온다 다음으로 이어 읽고 싶어요", "votes": 6 },
-    { "id": "wish-2", "title": "도둑맞은 집중력", "author": "요한 하리", "reason": "시험 기간에 다 같이 읽으면 좋을 듯", "votes": 3 },
-    { "id": "wish-3", "title": "이처럼 사소한 것들", "author": "클레어 키건", "reason": "얇아서 릴레이로 금방 돌 것 같아요", "votes": 8 },
-    { "id": "wish-4", "title": "코스모스", "author": "칼 세이건", "reason": "혼자선 못 끝낼 책, 같이 읽으면 가능!", "votes": 4 },
-    { "id": "wish-5", "title": "사피엔스", "author": "유발 하라리", "reason": "교양 과제랑 겹쳐서 메모 나누고 싶어요", "votes": 2 },
-    { "id": "wish-6", "title": "아몬드", "author": "손원평", "reason": "", "votes": 1 }
+    { "id": "wish-1", "isbn": "9788954682152", "title": "작별하지 않는다", "author": "한강", "max": 10, "reason": "소년이 온다 다음으로 이어 읽고 싶어요", "votes": 6 },
+    { "id": "wish-2", "isbn": "9791167740984", "title": "도둑맞은 집중력", "author": "요한 하리", "max": 6, "reason": "시험 기간에 다 같이 읽으면 좋을 듯", "votes": 3 },
+    { "id": "wish-3", "isbn": "9791130646381", "title": "이처럼 사소한 것들", "author": "클레어 키건", "max": 10, "reason": "얇아서 릴레이로 금방 돌 것 같아요", "votes": 8 },
+    { "id": "wish-4", "isbn": "9788983711892", "title": "코스모스", "author": "칼 세이건", "max": 8, "reason": "혼자선 못 끝낼 책, 같이 읽으면 가능!", "votes": 4 },
+    { "id": "wish-5", "isbn": "9788934972464", "title": "사피엔스", "author": "유발 하라리", "max": 10, "reason": "교양 과제랑 겹쳐서 메모 나누고 싶어요", "votes": 2 },
+    { "id": "wish-6", "isbn": "9788936434267", "title": "아몬드", "author": "손원평", "max": 4, "reason": "", "votes": 1 }
   ],
   "done": [
     {

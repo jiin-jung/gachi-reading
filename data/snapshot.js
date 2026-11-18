@@ -17,5 +17,12 @@ export default {
     '9791139717013': 'https://t1.daumcdn.net/lbook/image/6690045?timestamp=20260703151217',
     '9788936434120': 'https://t1.daumcdn.net/lbook/image/532683?timestamp=20261107110839',
     '9791189327156': 'https://t1.daumcdn.net/lbook/image/5912160?timestamp=20261112124719',
+    // 다음에 같이 읽을 책 예시
+    '9788954682152': 'https://t1.daumcdn.net/lbook/image/5824679?timestamp=20251223144054',
+    '9791167740984': 'https://t1.daumcdn.net/lbook/image/6336810?timestamp=20260108151957',
+    '9791130646381': 'https://t1.daumcdn.net/lbook/image/6500196?timestamp=20250423154319',
+    '9788983711892': 'https://t1.daumcdn.net/lbook/image/1164431?timestamp=20260826111032',
+    '9788934972464': 'https://www.nl.go.kr/seoji/fu/ecip/dbfiles/CIP_FILES_TBL/4996502_3.jpg',
+    '9788936434267': 'https://t1.daumcdn.net/lbook/image/532619?timestamp=20231124191358',
   },
 };

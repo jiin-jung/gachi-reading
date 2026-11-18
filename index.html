@@ -104,6 +104,8 @@
   input { min-height:44px; padding:0 12px; border:1px solid #CDD4DC; border-radius:6px; font:inherit; font-size:14px; color:var(--ink); }
   input.nick { flex:0 1 120px; min-width:0; }
   input.text { flex:1 1 200px; min-width:0; }
+  .review-lock { margin:0; font-size:14px; line-height:1.6; color:var(--sub); }
+  .review-qr { margin:0; padding:10px 12px; border-radius:10px; background:#FFF7E6; color:#9A5B00; font-size:14px; font-weight:600; }
   .review-fields { display:flex; flex-wrap:wrap; gap:8px; }
   .status { padding:24px; border-radius:10px; background:var(--soft); color:var(--sub); font-size:15px; line-height:1.6; }
   footer { margin-top:56px; border-top:1px solid var(--line); padding-top:20px; font-size:13px; line-height:1.6; color:var(--sub); display:flex; flex-direction:column; gap:4px; text-align:left; }
@@ -128,14 +130,18 @@
   .wish-list { width:100%; margin-top:64px; text-align:left; display:flex; flex-direction:column; gap:12px; }
   .wish-list .sec span { display:block; margin-top:4px; }
   .wish-list ul { list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:12px; }
-  .wish { display:flex; gap:16px; align-items:flex-end; justify-content:space-between; padding:16px 18px; border:1px solid var(--line); border-radius:14px; }
-  .wish > div { flex:1; min-width:0; display:flex; flex-direction:column; gap:6px; align-self:stretch; }
+  .wish { display:grid; grid-template-columns:64px minmax(0, 1fr); gap:12px 16px; align-items:end; padding:16px 18px; border:1px solid var(--line); border-radius:14px; }
+  .wish .cover { align-self:start; padding:6px 6px 6px 10px; border-top-width:3px; } .wish .cover .t { font-size:11px; } .wish .cover .a { display:none; }
+  .wish > div:not(.cover) { min-width:0; display:flex; flex-direction:column; gap:6px; align-self:stretch; }
+  .wish > .btn { grid-column:2; justify-self:end; }
+  .cands .wish { border-color:var(--blue); background:#F5F8FD; }
+  .wish-form select { min-height:44px; padding:0 10px; border:1px solid #CDD4DC; border-radius:6px; font:inherit; font-size:14px; color:var(--ink); background:#fff; }
   .wish > div > .bar { margin-top:auto; } /* 제목은 위, 진행 막대는 아래로 맞춤 */
   .wish b { color:var(--navy); } .wish p { margin:0; font-size:14px; color:#35373A; }
   .wish .bar { height:4px; margin:4px 0 0; } .wish .bar > span { background:var(--point); }
   .wish .mp { font-size:12px; color:var(--sub); }
   .wish-more { align-self:center; }
-  .wish-msg { margin:0; font-size:14px; color:var(--blue); font-weight:600; }
+  .wish-msg { margin:0; font-size:14px; color:var(--blue); font-weight:600; } .wish-msg a { color:inherit; }
   .mini { width:100%; display:flex; flex-direction:column; gap:6px; text-align:left; margin-top:6px; }
   .mini .mt { font-size:14px; font-weight:700; color:var(--navy); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .mini .bar { height:4px; margin:0; }
@@ -152,13 +158,12 @@
     .pick:not(.on) .mini { opacity:0; }
     .bubble { display:none !important; }
     .wish-list ul { grid-template-columns:minmax(0, 1fr); }
-    .wish { flex-direction:column; align-items:stretch; }
-    .wish .btn { width:100%; }
+    .wish .btn { grid-column:1 / -1; width:100%; }
     .wish-form .review-fields, form[data-id] .review-fields { flex-direction:column; }
-    .wish-form input, .wish-form .btn, form[data-id] input, form[data-id] .btn { width:100%; flex-basis:auto; }
-    input { font-size:16px; }
+    .wish-form input, .wish-form select, .wish-form .btn, form[data-id] input, form[data-id] .btn { width:100%; flex-basis:auto; }
+    input, select { font-size:16px; }
   }
-  @media (max-width:932px) and (max-height:500px){ input { font-size:16px; } }
+  @media (max-width:932px) and (max-height:500px){ input, select { font-size:16px; } }
 </style>
 </head>
 <body>
@@ -183,7 +188,7 @@
 </main>
 
 <script>
-const ui = { sel: -1, wishAll: false, wishMsg: '' };
+const ui = { sel: -1, wishAll: false, wishMsg: '', wishHref: '', wishForm: null, wishCands: [] };
 let data = null;
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
@@ -198,12 +203,28 @@ function doneCard(d) {
   const href = '#done/' + encodeURIComponent(d.id);
   return `<article class="done">
     <a class="done-link" href="${href}">${coverHtml(d)}<h3>${esc(d.title)}</h3></a>
-    <a class="btn ghost sm" href="${href}/review">후기 남기기</a>
+    <a class="btn ghost sm" href="${href}">후기 보기</a>
   </article>`;
 }
 const BACK = '<a class="btn ghost sm back" href="#">← 목록으로</a>';
+// 후기 목록 + 입력칸 (완주한 책·읽는 중인 책 공용, id = 완주 id 또는 ISBN)
+// 후기는 책에 꽂힌 책갈피 카드의 QR(#book/<isbn>/qr, #done/<id>/qr)로 들어왔을 때만 입력칸이 열림
+// → 실물 책을 가진(빌려 읽은) 사람만 쓸 수 있음. ponytail: 링크를 알면 누구나 열 수 있음, 운영 땐 책마다 비밀 토큰이나 대출 기록 확인
+function reviewBlock(id, reviews, placeholder, canWrite) {
+  return `<h3>후기 ${reviews.length}개</h3>
+    ${reviews.map((r) => `<div class="review"><b>${esc(r.nick)}</b><span>${esc(r.text)}</span></div>`).join('') || '<div class="status">아직 후기가 없어요. 첫 후기를 남겨주세요</div>'}
+    ${canWrite ? `<p class="review-qr">📖 책갈피 카드 QR로 들어왔어요. 읽은 소감을 남겨주세요</p>
+    <form data-id="${esc(id)}">
+      <label for="t-${esc(id)}">후기 남기기</label>
+      <div class="review-fields">
+        <input class="nick" name="nick" placeholder="닉네임" aria-label="닉네임" maxlength="20">
+        <input class="text" id="t-${esc(id)}" name="text" placeholder="${placeholder}" maxlength="200" required>
+        <button type="submit" class="btn">등록</button>
+      </div>
+    </form>` : '<p class="review-lock">🔒 후기는 이 책을 빌려 읽은 학생만, 책에 꽂힌 책갈피 카드의 QR을 찍어서 남길 수 있어요</p>'}`;
+}
 // 진행 중인 책 상세 (#book/<isbn>): 신청/취소는 여기서
-function bookPage(b, max) {
+function bookPage(b, max, qr) {
   const left = max - b.readers;
   return `<section class="page">
     ${BACK}
@@ -217,25 +238,17 @@ function bookPage(b, max) {
     </div>
     <div class="memo"><b>${b.memo ? '책갈피 카드 최근 메모' : '메모 없음'}</b><span>${esc(b.memo || '아직 메모가 없어요. 첫 번째 독자가 되어주세요')}</span></div>
     <div class="action">${joinArea(b, max)}</div>
+    ${reviewBlock(b.isbn, b.reviews, '읽은 소감을 한 줄로', qr)}
   </section>`;
 }
-// 완주한 책 상세 (#done/<id>, 후기 남기기 버튼은 #done/<id>/review → 입력칸 포커스)
-function donePage(d, max) {
+// 완주한 책 상세 (#done/<id>)
+function donePage(d, max, qr) {
   return `<section class="page">
     ${BACK}
     <div class="page-head">${coverHtml(d)}
       <div class="meta"><span class="field">${esc(d.field)}</span><h2>${esc(d.title)}</h2>
         <span class="author">${esc(d.author)} · ${max}/${max}명 릴레이 완주 · ${esc(d.doneDate)}</span></div></div>
-    <h3>후기 ${d.reviews.length}개</h3>
-    ${d.reviews.map((r) => `<div class="review"><b>${esc(r.nick)}</b><span>${esc(r.text)}</span></div>`).join('') || '<div class="status">아직 후기가 없어요. 첫 후기를 남겨주세요</div>'}
-    <form data-id="${esc(d.id)}">
-      <label for="t-${esc(d.id)}">후기 남기기</label>
-      <div class="review-fields">
-        <input class="nick" name="nick" placeholder="닉네임" aria-label="닉네임" maxlength="20">
-        <input class="text" id="t-${esc(d.id)}" name="text" placeholder="이어 읽은 소감을 한 줄로" maxlength="200" required>
-        <button type="submit" class="btn">등록</button>
-      </div>
-    </form>
+    ${reviewBlock(d.id, d.reviews, '이어 읽은 소감을 한 줄로', qr)}
   </section>`;
 }
 // 상세로 가면 맨 위, 완주한 책 상세에서 돌아오면 완주한 책 섹션으로
@@ -249,14 +262,13 @@ function render() {
   if (!data) return;
   const { now, done } = data;
   const head = (t, n) => `<h2 class="sec">${t} <span>${n}권</span></h2>`;
-  const [, kind, id, review] = location.hash.match(/^#(book|done)\/([^/]+)(\/review)?$/) || [];
+  const [, kind, id, qr] = location.hash.match(/^#(book|done)\/([^/]+)(\/qr)?$/) || [];
   const key = id && decodeURIComponent(id);
   const book = kind === 'book' && data.now.find((b) => b.isbn === key);
   const page = kind === 'done' && data.done.find((d) => d.id === key);
   if (book || page) {
-    document.getElementById('list-now').innerHTML = book ? bookPage(book, data.relayMax) : donePage(page, data.relayMax);
+    document.getElementById('list-now').innerHTML = book ? bookPage(book, data.relayMax, !!qr) : donePage(page, data.relayMax, !!qr);
     loadCovers();
-    if (review) document.getElementById('t-' + page.id).focus();
     return;
   }
   document.getElementById('list-now').innerHTML = (now.length ? shelf(now) : `<div class="status">진행 중인 책이 없어요.</div>`)
@@ -408,6 +420,7 @@ function loadCovers() {
 document.addEventListener('click', (e) => {
   const j = e.target.closest('[data-join]'); if (j) { join(j.dataset.join); return; }
   const w = e.target.closest('[data-wish]'); if (w) { wish(w.dataset.wish); return; }
+  const pk = e.target.closest('[data-pick]'); if (pk) { pickWish(Number(pk.dataset.pick)); return; }
   if (e.target.closest('[data-wish-all]')) { ui.wishAll = !ui.wishAll; render(); return; }
   if (!e.target.closest('.row')) select(-1);
   const a = e.target.closest('[data-dir]');
@@ -441,13 +454,16 @@ const wishSaved = JSON.parse(localStorage.getItem(WISH_KEY) || '{"added":[],"joi
 const saveWish = () => localStorage.setItem(WISH_KEY, JSON.stringify(wishSaved));
 // 많이 모인 순(같으면 최근 추천 먼저), 기본 3권만 → 추천이 100권이어도 화면이 길어지지 않음
 const WISH_SHOW = 3;
-const wishCount = (w, max) => Math.min(w.votes + (wishSaved.joined.includes(w.id) ? 1 : 0), max);
+// 모집 인원은 추천한 사람이 정함 (없으면 기본 10명)
+const wishMax = (w, max) => w.max || max;
+const wishCount = (w, max) => Math.min(w.votes + (wishSaved.joined.includes(w.id) ? 1 : 0), wishMax(w, max));
 function wishSection(list, max) {
-  const sorted = list.map((w, i) => ({ w, i, n: wishCount(w, max) })).sort((a, b) => b.n - a.n || b.i - a.i);
+  // 다 모인 비율 순(같으면 최근 추천 먼저)
+  const sorted = list.map((w, i) => ({ w, i, n: wishCount(w, max), m: wishMax(w, max) })).sort((a, b) => b.n / b.m - a.n / a.m || b.i - a.i);
   const shown = ui.wishAll ? sorted : sorted.slice(0, WISH_SHOW);
-  const items = shown.map(({ w, n }) => {
+  const items = shown.map(({ w, n, m: max }) => {
     const mine = wishSaved.joined.includes(w.id);
-    return `<li class="wish">
+    return `<li class="wish">${coverHtml(w)}
       <div><b>${esc(w.title)}</b>${w.author ? ` <span class="author">${esc(w.author)}</span>` : ''}
         ${w.reason ? `<p>“${esc(w.reason)}”</p>` : ''}
         <span class="bar"><span style="width:${(n / max) * 100}%"></span></span>
@@ -456,16 +472,22 @@ function wishSection(list, max) {
         : n < max ? `<button type="button" class="btn sm" data-wish="${esc(w.id)}">나도 읽을래요</button>` : ''}
     </li>`;
   }).join('');
+  const f = ui.wishForm || { title: '', reason: '', max };
+  const cands = ui.wishCands.map((b, i) => `<li class="wish">${coverHtml(b)}
+      <div><b>${esc(b.title)}</b><span class="author">${esc(b.author)}${b.publisher ? ' · ' + esc(b.publisher) : ''}</span></div>
+      <button type="button" class="btn sm" data-pick="${i}">이 책이에요</button></li>`).join('');
   return `<section class="wish-list">
-    <h2 class="sec">다음에 같이 읽을 책 <span>읽고 싶은 책을 올리고, 같이 읽을 사람을 모아요</span></h2>
+    <h2 class="sec">다음에 같이 읽을 책 <span>읽고 싶은 책을 올리고 같이 읽을 사람을 모아요. 인원이 다 모이면 도서관이 책을 준비해 릴레이를 시작해요</span></h2>
     <form class="wish-form">
       <div class="review-fields">
-        <input class="text" name="title" placeholder="읽고 싶은 책 제목" aria-label="책 제목" maxlength="60" required>
-        <input class="text" name="reason" placeholder="추천 한마디 (선택)" aria-label="추천 한마디" maxlength="80">
-        <button type="submit" class="btn">이 책 읽을래요</button>
+        <input class="text" name="title" placeholder="읽고 싶은 책 제목" aria-label="책 제목" maxlength="60" required value="${esc(f.title)}">
+        <input class="text" name="reason" placeholder="추천 한마디 (선택)" aria-label="추천 한마디" maxlength="80" value="${esc(f.reason)}">
+        <select name="max" aria-label="같이 읽을 인원">${[4, 6, 8, 10].map((n) => `<option value="${n}"${n === f.max ? ' selected' : ''}>${n}명이서 읽기</option>`).join('')}</select>
+        <button type="submit" class="btn">책 찾기</button>
       </div>
     </form>
-    ${ui.wishMsg ? `<p class="wish-msg" role="status">${esc(ui.wishMsg)}</p>` : ''}
+    ${ui.wishMsg ? `<p class="wish-msg" role="status">${esc(ui.wishMsg)}${ui.wishHref ? ` <a href="${ui.wishHref}">보러 가기 →</a>` : ''}</p>` : ''}
+    ${cands ? `<ul class="cands">${cands}</ul>` : ''}
     <ul>${items}</ul>
     ${list.length > WISH_SHOW ? `<button type="button" class="btn ghost sm wish-more" data-wish-all>${ui.wishAll ? '접기' : `추천 도서 ${list.length}권 모두 보기`}</button>` : ''}
   </section>`;
@@ -476,24 +498,48 @@ function wish(id) {
   else wishSaved.joined.push(id);
   saveWish(); render();
 }
-document.addEventListener('submit', (e) => {
+// 추천은 제목으로 실제 책을 검색해 고른 것만 → 아무 글자나 올라가지 않음
+document.addEventListener('submit', async (e) => {
   const form = e.target.closest('.wish-form'); if (!form) return;
   e.preventDefault();
-  const title = form.title.value.trim(); if (!title) return;
-  // 같은 책은 카드 하나로: 공백·대소문자만 무시하고 비교
+  const f = ui.wishForm = { title: form.title.value.trim(), reason: form.reason.value.trim(), max: Number(form.max.value) };
+  if (!f.title) return;
+  ui.wishCands = []; ui.wishHref = ''; ui.wishMsg = '책을 찾는 중…'; render();
+  try {
+    const res = await fetch('/api/search?q=' + encodeURIComponent(f.title), { signal: AbortSignal.timeout(8000) });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error);
+    ui.wishCands = json.books;
+    ui.wishMsg = json.books.length ? '추천할 책을 골라주세요' : `「${f.title}」 책을 찾지 못했어요. 제목을 다시 확인해 주세요`;
+  } catch {
+    ui.wishMsg = '책 검색이 잠시 안 돼요. 잠시 후 다시 시도해 주세요';
+  }
+  render();
+});
+function pickWish(i) {
+  const b = ui.wishCands[i], f = ui.wishForm;
+  // 같은 책은 카드 하나로: ISBN이나 제목(공백·대소문자 무시)이 같으면 기존 카드에 신청
   const norm = (t) => t.replace(/\s+/g, '').toLowerCase();
-  const same = data.wish.find((w) => norm(w.title) === norm(title));
-  if (same) {
+  const is = (x) => (x.isbn && x.isbn === b.isbn) || norm(x.title) === norm(b.title);
+  // 이미 책장에 있는 책(이어 읽는 중·완주)은 추천 대신 그 책으로 안내
+  const now = data.now.find(is), done = data.done.find(is);
+  const same = data.wish.find(is);
+  ui.wishHref = '';
+  if (now || done) {
+    ui.wishMsg = now ? `지금 이어 읽는 중인 책이에요: 「${now.title}」` : `이미 릴레이를 완주한 책이에요: 「${done.title}」`;
+    ui.wishHref = now ? '#book/' + encodeURIComponent(now.isbn) : '#done/' + encodeURIComponent(done.id);
+  } else if (same) {
     const already = wishSaved.joined.includes(same.id);
     if (!already) { wishSaved.joined.push(same.id); saveWish(); }
     ui.wishMsg = already ? `이미 신청한 책이에요: 「${same.title}」` : `이미 추천된 책이라 신청에 함께했어요: 「${same.title}」`;
   } else {
-    const w = { id: 'my-' + Date.now(), title, reason: form.reason.value.trim(), votes: 0 };
+    const w = { id: 'my-' + Date.now(), isbn: b.isbn, title: b.title, author: b.author, reason: f.reason, max: f.max, votes: 0 };
     wishSaved.added.push(w); wishSaved.joined.push(w.id); saveWish();
-    data.wish.push(w); ui.wishMsg = '';
+    data.wish.push(w); ui.wishMsg = `「${b.title}」 추천 완료! 첫 번째 신청자가 됐어요`;
   }
+  ui.wishCands = []; ui.wishForm = null;
   render();
-});
+}
 const REVIEW_KEY = 'gachi-reviews';
 const savedReviews = JSON.parse(localStorage.getItem(REVIEW_KEY) || '{}');
 document.addEventListener('submit', (e) => {
@@ -503,7 +549,7 @@ document.addEventListener('submit', (e) => {
   const review = { nick: form.nick.value.trim() || '익명', text };
   (savedReviews[form.dataset.id] ||= []).push(review);
   localStorage.setItem(REVIEW_KEY, JSON.stringify(savedReviews));
-  data.done.find((d) => d.id === form.dataset.id).reviews.push(review);
+  (data.done.find((d) => d.id === form.dataset.id) || data.now.find((b) => b.isbn === form.dataset.id)).reviews.push(review);
   render();
 });
 
@@ -513,6 +559,7 @@ fetch('/api/books', { signal: AbortSignal.timeout(15000) }).then(async (res) => 
   data = json;
   data.now.forEach((b) => applyJoined(b, data.relayMax));
   data.done.forEach((d) => d.reviews.push(...(savedReviews[d.id] || [])));
+  data.now.forEach((b) => (b.reviews ||= []).push(...(savedReviews[b.isbn] || [])));
   data.wish = [...(data.wish || []), ...wishSaved.added];
   render();
 }).catch((err) => {
