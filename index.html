@@ -586,7 +586,8 @@ document.addEventListener('submit', (e) => {
   render();
 });
 
-fetch('/api/books', { signal: AbortSignal.timeout(15000) }).then(async (res) => {
+fetch('/api/books?v=4', { // 데이터가 바뀌면 v를 바꿔 CDN 캐시를 비움
+  signal: AbortSignal.timeout(15000) }).then(async (res) => {
   const json = await res.json();
   if (!res.ok) throw new Error(json.error);
   data = json;
