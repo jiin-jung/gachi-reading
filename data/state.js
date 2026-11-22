@@ -1,9 +1,9 @@
 // 예시 데이터: 책별 릴레이 참여 인원, 대출 상태, 페이지·줄에 남긴 메모 (키는 ISBN)
-// API 목록에 없는 ISBN의 책은 0/10명, 대출 가능으로 표시됩니다.
+// API 목록에 없는 ISBN의 책은 0/4명, 대출 가능으로 표시됩니다.
 export default {
   "relay": {
     "9788937428517": {
-      "readers": 3,
+      "readers": 2,
       "memo": "p.87 둘째 문단 — 여기서 그림을 다시 찾아봤어요",
       "due": null,
       "reviews": [
@@ -19,7 +19,7 @@ export default {
       "queue": 2
     },
     "9791172540241": {
-      "readers": 8,
+      "readers": 3,
       "memo": "p.142 — 앞사람 메모에 반대! 저는 이해됐어요",
       "due": "11.18",
       "queue": 3,
@@ -30,7 +30,7 @@ export default {
       ]
     },
     "9791193078259": {
-      "readers": 9,
+      "readers": 1,
       "memo": "p.61 마지막 줄 — 다음 분도 여기서 멈춰보세요",
       "due": null,
       "reviews": [
@@ -49,7 +49,7 @@ export default {
       "due": null
     },
     "9791191013740": {
-      "readers": 4,
+      "readers": 3,
       "memo": "p.9 — 첫 장부터 찔림. 다들 어땠어요?",
       "due": "11.21",
       "queue": 1
@@ -60,18 +60,18 @@ export default {
       "due": null
     },
     "9788934989103": {
-      "readers": 5,
+      "readers": 3,
       "memo": "p.75 — 공대생 시점으로 메모 남겨요",
       "due": null
     }
   },
   "wish": [
-    { "id": "wish-1", "isbn": "9788954682152", "title": "작별하지 않는다", "author": "한강", "max": 10, "reason": "소년이 온다 다음으로 이어 읽고 싶어요", "votes": 6 },
-    { "id": "wish-2", "isbn": "9791167740984", "title": "도둑맞은 집중력", "author": "요한 하리", "max": 6, "reason": "시험 기간에 다 같이 읽으면 좋을 듯", "votes": 3 },
-    { "id": "wish-3", "isbn": "9791130646381", "title": "이처럼 사소한 것들", "author": "클레어 키건", "max": 10, "reason": "얇아서 릴레이로 금방 돌 것 같아요", "votes": 8 },
-    { "id": "wish-4", "isbn": "9788983711892", "title": "코스모스", "author": "칼 세이건", "max": 8, "reason": "혼자선 못 끝낼 책, 같이 읽으면 가능!", "votes": 4 },
-    { "id": "wish-5", "isbn": "9788934972464", "title": "사피엔스", "author": "유발 하라리", "max": 10, "reason": "교양 과제랑 겹쳐서 메모 나누고 싶어요", "votes": 2 },
-    { "id": "wish-6", "isbn": "9788936434267", "title": "아몬드", "author": "손원평", "max": 4, "reason": "", "votes": 1 }
+    { "id": "wish-1", "isbn": "9788954682152", "title": "작별하지 않는다", "author": "한강", "max": 4, "reason": "소년이 온다 다음으로 이어 읽고 싶어요", "votes": 3 },
+    { "id": "wish-2", "isbn": "9791167740984", "title": "도둑맞은 집중력", "author": "요한 하리", "max": 3, "reason": "시험 기간에 다 같이 읽으면 좋을 듯", "votes": 2 },
+    { "id": "wish-3", "isbn": "9791130646381", "title": "이처럼 사소한 것들", "author": "클레어 키건", "max": 4, "reason": "얇아서 릴레이로 금방 돌 것 같아요", "votes": 3 },
+    { "id": "wish-4", "isbn": "9788983711892", "title": "코스모스", "author": "칼 세이건", "max": 4, "reason": "혼자선 못 끝낼 책, 같이 읽으면 가능!", "votes": 2 },
+    { "id": "wish-5", "isbn": "9788934972464", "title": "사피엔스", "author": "유발 하라리", "max": 2, "reason": "교양 과제랑 겹쳐서 메모 나누고 싶어요", "votes": 1 },
+    { "id": "wish-6", "isbn": "9788936434267", "title": "아몬드", "author": "손원평", "max": 3, "reason": "", "votes": 1 }
   ],
   "done": [
     {

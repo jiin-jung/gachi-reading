@@ -391,7 +391,7 @@ function shelf(books) {
 function mini(b, max) {
   return `<span class="mini"><span class="mt">${esc(b.title)}</span>
     <span class="bar"><span style="width:${(b.readers / max) * 100}%"></span></span>
-    <span class="mp"><b>${b.readers}/${max}명</b>${max - b.readers <= 2 ? ' · 완주 임박' : ''}</span></span>`;
+    <span class="mp"><b>${b.readers}/${max}명</b>${max - b.readers === 1 ? ' · 완주 임박' : ''}</span></span>`;
 }
 function select(i) {
   if (!data || i === ui.sel) return;
@@ -487,7 +487,7 @@ const wishSaved = JSON.parse(localStorage.getItem(WISH_KEY) || '{"added":[],"joi
 const saveWish = () => localStorage.setItem(WISH_KEY, JSON.stringify(wishSaved));
 // 많이 모인 순(같으면 최근 추천 먼저), 기본 3권만 → 추천이 100권이어도 화면이 길어지지 않음
 const WISH_SHOW = 3;
-// 모집 인원은 추천한 사람이 정함 (없으면 기본 10명)
+// 모집 인원은 추천한 사람이 정함 (2~4명, 많으면 완주까지 너무 오래 걸림)
 const wishMax = (w, max) => w.max || max;
 const wishCount = (w, max) => Math.min(w.votes + (wishSaved.joined.includes(w.id) ? 1 : 0), wishMax(w, max));
 function wishSection(list, max) {
@@ -505,7 +505,7 @@ function wishSection(list, max) {
         : n < max ? `<button type="button" class="btn sm" data-wish="${esc(w.id)}">나도 읽을래요</button>` : ''}
     </li>`;
   }).join('');
-  const f = ui.wishForm || { title: '', reason: '', max };
+  const f = ui.wishForm || { title: '', reason: '', max: 4 };
   const cands = ui.wishCands.map((b, i) => `<li class="wish">${coverHtml(b)}
       <div><b>${esc(b.title)}</b><span class="author">${esc(b.author)}${b.publisher ? ' · ' + esc(b.publisher) : ''}</span></div>
       <button type="button" class="btn sm" data-pick="${i}">이 책이에요</button></li>`).join('');
@@ -515,7 +515,7 @@ function wishSection(list, max) {
       <div class="review-fields">
         <input class="text" name="title" placeholder="읽고 싶은 책 제목" aria-label="책 제목" maxlength="60" required value="${esc(f.title)}">
         <input class="text" name="reason" placeholder="추천 한마디 (선택)" aria-label="추천 한마디" maxlength="80" value="${esc(f.reason)}">
-        <select name="max" aria-label="같이 읽을 인원">${[4, 6, 8, 10].map((n) => `<option value="${n}"${n === f.max ? ' selected' : ''}>${n}명이서 읽기</option>`).join('')}</select>
+        <select name="max" aria-label="같이 읽을 인원">${[2, 3, 4].map((n) => `<option value="${n}"${n === f.max ? ' selected' : ''}>${n}명이서 읽기</option>`).join('')}</select>
         <button type="submit" class="btn">책 찾기</button>
       </div>
     </form>
