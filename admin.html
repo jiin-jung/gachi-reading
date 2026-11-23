@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>가치 읽기 관리자 — 시연용</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+  @font-face { font-family:'S-CoreDream'; font-weight:400; font-display:swap; src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-3Light.woff') format('woff'); }
+  @font-face { font-family:'S-CoreDream'; font-weight:500; font-display:swap; src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-4Regular.woff') format('woff'); }
+  @font-face { font-family:'S-CoreDream'; font-weight:600 700; font-display:swap; src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-5Medium.woff') format('woff'); }
+  @font-face { font-family:'S-CoreDream'; font-weight:800; font-display:swap; src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-6Bold.woff') format('woff'); }
+  :root { --blue:#0A4A9B; --navy:#002F6A; --ink:#2F2F32; --sub:#5F6368; --line:#E6E9ED; --soft:#F7F8FA; --point:#FDB31E; --ok:#1E7A46; --bad:#B42318; --warn:#9A5B00; }
+  * { box-sizing:border-box; }
+  body { margin:0; color:var(--ink); background:var(--soft); font-family:'S-CoreDream',system-ui,sans-serif; word-break:keep-all; overflow-wrap:anywhere; }
+  header { position:sticky; top:0; z-index:10; background:#fff; border-bottom:1px solid var(--line); }
+  .top { max-width:1200px; margin:0 auto; padding:16px 32px; display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap; }
+  .brand { display:flex; align-items:center; gap:10px; font-size:18px; font-weight:700; color:var(--navy); }
+  .brand img { width:51px; height:30px; object-fit:contain; }
+  .tag { padding:4px 10px; border:1px solid #F3C56B; border-radius:999px; background:#FFF7E6; color:var(--warn); font-size:13px; font-weight:700; }
+  main { max-width:1200px; margin:0 auto; padding:28px 32px 64px; display:flex; flex-direction:column; gap:20px; }
+  h1 { margin:0; font-size:28px; color:var(--navy); letter-spacing:-0.02em; }
+  .note { margin:0; font-size:14px; line-height:1.6; color:var(--sub); }
+  .tabs { display:flex; gap:8px; flex-wrap:wrap; }
+  .tabs a { min-height:44px; padding:0 16px; display:inline-flex; align-items:center; gap:8px; border:1px solid var(--line); border-radius:10px; background:#fff; color:var(--navy); font-size:15px; font-weight:700; text-decoration:none; }
+  .tabs a[aria-current] { background:var(--navy); border-color:var(--navy); color:#fff; }
+  .tabs .n { min-width:22px; padding:0 6px; border-radius:999px; background:var(--point); color:var(--navy); font-size:12px; text-align:center; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:14px; padding:20px; display:flex; flex-direction:column; gap:14px; }
+  .card h2 { margin:0; font-size:19px; color:var(--navy); }
+  .bar-top { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .bar-top .note { margin-right:auto; }
+  table { width:100%; border-collapse:collapse; font-size:14px; }
+  th, td { padding:12px 10px; border-bottom:1px solid var(--line); text-align:left; vertical-align:middle; }
+  th { font-size:13px; font-weight:600; color:var(--sub); background:var(--soft); }
+  td b { color:var(--navy); } td small { display:block; margin-top:2px; color:var(--sub); font-size:12px; }
+  tr.off td { opacity:.45; }
+  .pill { display:inline-block; padding:3px 10px; border-radius:999px; font-size:12px; font-weight:700; white-space:nowrap; }
+  .pill.held { background:#E7F5EC; color:var(--ok); }
+  .pill.other { background:#FFF7E6; color:var(--warn); }
+  .pill.missing, .pill.rejected { background:#FDECEA; color:var(--bad); }
+  .pill.wait, .pill.error { background:var(--soft); color:var(--sub); border:1px solid var(--line); }
+  .pill.approved { background:#E8F0FB; color:var(--blue); }
+  .btn { min-height:36px; padding:0 12px; border:1px solid var(--blue); border-radius:8px; background:var(--blue); color:#fff; font:inherit; font-size:13px; font-weight:700; cursor:pointer; white-space:nowrap; }
+  .btn:hover { background:var(--navy); border-color:var(--navy); }
+  .btn.ghost { background:#fff; color:var(--navy); border-color:#CDD4DC; }
+  .btn.ghost:hover { background:var(--soft); border-color:var(--navy); }
+  .btn.bad { background:#fff; color:var(--bad); border-color:#F1B5AE; }
+  .btn:focus-visible, .tabs a:focus-visible, select:focus-visible { outline:3px solid rgba(10,74,155,.35); outline-offset:2px; }
+  .acts { display:flex; gap:6px; flex-wrap:wrap; }
+  select { min-height:36px; padding:0 8px; border:1px solid #CDD4DC; border-radius:6px; font:inherit; font-size:13px; background:#fff; color:var(--ink); }
+  .memo-text { line-height:1.55; }
+  .where { color:var(--warn); font-weight:700; font-size:12px; }
+  .status { padding:20px; border-radius:10px; background:#fff; color:var(--sub); }
+  @media (max-width:760px){
+    .top, main { padding-left:16px; padding-right:16px; }
+    table, tbody, tr, td { display:block; } thead { display:none; }
+    tr { padding:12px 0; border-bottom:1px solid var(--line); } td { border:0; padding:4px 0; }
+  }
+</style>
+</head>
+<body>
+<header><div class="top">
+  <div class="brand"><img src="/inu-logo.png" alt="">가치 읽기 관리자</div>
+  <span class="tag">시연용 · 이 브라우저에만 저장</span>
+</div></header>
+<main>
+  <h1>관리자 대시보드</h1>
+  <p class="note">서버 저장소가 없는 프로토타입이라 승인·숨기기 기록은 이 브라우저에만 남고, 학생 화면도 같은 브라우저에서만 바뀝니다. 실제 운영 땐 도서관 대출 시스템·서버 저장소와 연동합니다.</p>
+  <nav class="tabs" id="tabs"></nav>
+  <div id="view"><div class="status">불러오는 중…</div></div>
+</main>
+<script>
+// 학생 화면(index.html)과 같은 localStorage 키를 읽음 → 같은 브라우저에서 학생이 한 신청·메모가 보임
+const read = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } };
+const joined = new Set(read('gachi-joined', []));
+const wishSaved = read('gachi-wish', { added: [], joined: [] });
+const savedReviews = read('gachi-reviews', {});
+// 관리자 기록: holding(수동 판정 isbn→held|missing), wish(id→approved|rejected), hidden(메모 키 목록)
+const ADMIN_KEY = 'gachi-admin';
+const admin = Object.assign({ holding: {}, wish: {}, hidden: [] }, read(ADMIN_KEY, {}));
+const save = () => { localStorage.setItem(ADMIN_KEY, JSON.stringify(admin)); render(); };
+const memoKey = (id, r) => [id, r.page || '', r.nick, r.text].join('|'); // index.html과 같은 규칙
+
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+let data = null;
+const auto = {}; // isbn → 자동 소장 확인 결과
+
+// ---- 소장 확인 ----
+const HOLD_LABEL = { held: '소장', other: '다른 판만 소장', missing: '미소장', error: '확인 실패', wait: '확인 중' };
+const holdOf = (b) => admin.holding[b.isbn] || (auto[b.isbn] || {}).status || 'wait';
+const pill = (st, label) => `<span class="pill ${st}">${esc(label || HOLD_LABEL[st])}</span>`;
+function allBooks() {
+  const seen = new Set();
+  return [
+    ...data.now.map((b) => ({ ...b, kind: '이어 읽는 중' })),
+    ...data.wish.map((b) => ({ ...b, kind: '추천 도서' })),
+    ...data.done.map((b) => ({ ...b, kind: '완주' })),
+  ].filter((b) => b.isbn && !seen.has(b.isbn) && seen.add(b.isbn));
+}
+// 도서관 검색에 한꺼번에 몰리지 않게 3권씩
+async function checkAll(force) {
+  const queue = allBooks().filter((b) => force || !auto[b.isbn]);
+  queue.forEach((b) => (auto[b.isbn] = { status: 'wait' }));
+  render();
+  const worker = async () => {
+    for (let b; (b = queue.shift());) {
+      try {
+        const r = await fetch(`/api/holding?isbn=${b.isbn}&title=${encodeURIComponent(b.title)}`, { signal: AbortSignal.timeout(10000) });
+        auto[b.isbn] = await r.json();
+      } catch { auto[b.isbn] = { status: 'error' }; }
+      render();
+    }
+  };
+  await Promise.all([worker(), worker(), worker()]);
+}
+function holdingView() {
+  const rows = allBooks().map((b) => {
+    const a = auto[b.isbn] || { status: 'wait' };
+    const m = admin.holding[b.isbn] || '';
+    return `<tr>
+      <td><b>${esc(b.title)}</b><small>${esc(b.author)} · ISBN ${esc(b.isbn)}</small></td>
+      <td>${esc(b.kind)}</td>
+      <td>${pill(a.status)}${a.status === 'other' ? `<small>소장 판 ISBN ${esc(a.isbn)}</small>` : ''}</td>
+      <td>${a.volume ? `${esc(a.volume)}<small>${esc(a.state)}</small>` : '-'}</td>
+      <td><select data-hold="${esc(b.isbn)}" aria-label="${esc(b.title)} 최종 판정">
+        <option value=""${m ? '' : ' selected'}>자동 결과 따름</option>
+        <option value="held"${m === 'held' ? ' selected' : ''}>소장 (직접 확인)</option>
+        <option value="missing"${m === 'missing' ? ' selected' : ''}>미소장 (직접 확인)</option>
+      </select></td>
+    </tr>`;
+  }).join('');
+  return `<section class="card">
+    <div class="bar-top"><p class="note">국중도·카카오에서 가져온 책이 실제 학산도서관에 있는지 인천대 도서관 소장자료 검색으로 확인합니다. 같은 ISBN이 없고 같은 제목의 다른 판만 있으면 '다른 판만 소장'. 검색이 틀릴 수 있으니 최종 판정은 직접 고를 수 있어요.</p>
+      <button type="button" class="btn ghost" data-recheck>다시 확인</button></div>
+    <table><thead><tr><th>책</th><th>구분</th><th>자동 확인</th><th>청구기호 · 대출 상태</th><th>최종 판정</th></tr></thead><tbody>${rows}</tbody></table>
+  </section>`;
+}
+
+// ---- 추천 도서 승인 ----
+const wishMax = (w) => w.max || data.relayMax;
+const wishCount = (w) => Math.min(w.votes + (wishSaved.joined.includes(w.id) ? 1 : 0), wishMax(w));
+const WISH_LABEL = { approved: '승인 · 릴레이 준비', rejected: '반려' };
+function wishView() {
+  const rows = data.wish.map((w) => {
+    const st = admin.wish[w.id], n = wishCount(w), max = wishMax(w), h = holdOf(w);
+    return `<tr class="${st === 'rejected' ? 'off' : ''}">
+      <td><b>${esc(w.title)}</b><small>${esc(w.author)}${w.reason ? ` · "${esc(w.reason)}"` : ''}</small></td>
+      <td>${n}/${max}명${n >= max ? '<small>인원 다 모임</small>' : ''}</td>
+      <td>${pill(h)}${h === 'missing' ? '<small>희망도서 신청 안내</small>' : ''}</td>
+      <td>${st ? pill(st, WISH_LABEL[st]) : pill('wait', '대기')}</td>
+      <td><div class="acts">${st
+        ? `<button type="button" class="btn ghost" data-wish="${esc(w.id)}" data-to="">되돌리기</button>`
+        : `<button type="button" class="btn" data-wish="${esc(w.id)}" data-to="approved"${h === 'held' || h === 'other' ? '' : ' disabled title="학산도서관 소장 책만 승인할 수 있어요"'}>승인</button>
+           <button type="button" class="btn bad" data-wish="${esc(w.id)}" data-to="rejected">반려</button>`}</div></td>
+    </tr>`;
+  }).join('');
+  return `<section class="card">
+    <p class="note">학생이 추천한 책입니다. 학산도서관에 있는 책만 승인할 수 있고, 승인하면 학생 화면에 '도서관 승인 · 릴레이 준비 중'으로, 반려하면 목록에서 빠집니다. 없는 책은 반려하고 희망도서 신청으로 안내해 주세요.</p>
+    <table><thead><tr><th>책</th><th>모인 인원</th><th>학산도서관</th><th>상태</th><th>처리</th></tr></thead><tbody>${rows}</tbody></table>
+  </section>`;
+}
+
+// ---- 대출 · 신청 현황 (읽기 전용) ----
+function queueView() {
+  const rows = data.now.map((b) => {
+    const me = joined.has(b.isbn);
+    const readers = Math.min(b.readers + (me ? 1 : 0), data.relayMax);
+    const queue = (b.queue || 0) + (me && b.due ? 1 : 0);
+    return `<tr>
+      <td><b>${esc(b.title)}</b><small>${esc(b.author)}</small></td>
+      <td>${readers}/${data.relayMax}명${me ? '<small>이 브라우저 신청 포함</small>' : ''}</td>
+      <td>${b.due ? `대출 중<small>반납 예정 ${esc(b.due)}</small>` : '대출대 보관 중'}</td>
+      <td>${queue ? `${queue}명` : '-'}</td>
+      <td>${pill(holdOf(b))}</td>
+    </tr>`;
+  }).join('');
+  return `<section class="card">
+    <p class="note">반납된 책은 대출대에 두었다가 신청 명단 순서대로 다음 사람에게 건넵니다. 반납 때 빈 메모 카드를 채우고, 주 1회 카드장을 점검해 주세요.</p>
+    <table><thead><tr><th>책</th><th>읽은 사람</th><th>대출 상태</th><th>대기</th><th>학산도서관</th></tr></thead><tbody>${rows}</tbody></table>
+  </section>`;
+}
+
+// ---- 메모 점검 ----
+function allMemos() {
+  const list = [];
+  for (const b of data.now) for (const r of b.reviews) list.push({ id: b.isbn, title: b.title, r });
+  for (const d of data.done) for (const r of d.reviews) list.push({ id: d.id, title: d.title, r });
+  return list;
+}
+function memoView() {
+  const rows = allMemos().map(({ id, title, r }) => {
+    const k = memoKey(id, r), off = admin.hidden.includes(k);
+    return `<tr class="${off ? 'off' : ''}">
+      <td><b>${esc(title)}</b>${r.page ? `<small class="where">p.${esc(r.page)}${r.line ? ` · ${esc(r.line)}번째 줄` : ''}</small>` : ''}</td>
+      <td>${esc(r.nick)}${r.local ? '<small>이 브라우저에서 작성</small>' : ''}</td>
+      <td class="memo-text">${esc(r.text)}</td>
+      <td><button type="button" class="btn ${off ? 'ghost' : 'bad'}" data-hide="${esc(k)}">${off ? '다시 보이기' : '숨기기'}</button></td>
+    </tr>`;
+  }).join('');
+  return `<section class="card">
+    <p class="note">QR로 남긴 온라인 메모입니다. 부적절한 메모는 숨기면 학생 화면에서 빠집니다. 종이 카드장은 주 1회 점검 때 빼 주세요.</p>
+    <table><thead><tr><th>책 · 페이지</th><th>닉네임</th><th>메모</th><th>처리</th></tr></thead><tbody>${rows}</tbody></table>
+  </section>`;
+}
+
+// ---- 화면 ----
+const TABS = [
+  ['holding', '소장 확인', () => allBooks().filter((b) => holdOf(b) !== 'held' && !admin.holding[b.isbn]).length, holdingView],
+  ['wish', '추천 도서 승인', () => data.wish.filter((w) => !admin.wish[w.id]).length, wishView],
+  ['queue', '대출 · 신청 현황', () => 0, queueView],
+  ['memo', '메모 점검', () => allMemos().filter(({ id, r }) => !admin.hidden.includes(memoKey(id, r))).length, memoView],
+];
+function render() {
+  if (!data) return;
+  const cur = TABS.find((t) => '#' + t[0] === location.hash) || TABS[0];
+  document.getElementById('tabs').innerHTML = TABS.map(([id, label, n]) => {
+    const c = n();
+    return `<a href="#${id}"${cur[0] === id ? ' aria-current="page"' : ''}>${label}${c ? `<span class="n">${c}</span>` : ''}</a>`;
+  }).join('') + '<button type="button" class="btn ghost" data-export style="margin-left:auto">처리 기록 내보내기</button>';
+  document.getElementById('view').innerHTML = cur[3]();
+}
+window.addEventListener('hashchange', render);
+document.addEventListener('change', (e) => {
+  const s = e.target.closest('[data-hold]'); if (!s) return;
+  if (s.value) admin.holding[s.dataset.hold] = s.value; else delete admin.holding[s.dataset.hold];
+  save();
+});
+document.addEventListener('click', (e) => {
+  const w = e.target.closest('[data-wish]');
+  if (w) { if (w.dataset.to) admin.wish[w.dataset.wish] = w.dataset.to; else delete admin.wish[w.dataset.wish]; save(); return; }
+  const h = e.target.closest('[data-hide]');
+  if (h) { const k = h.dataset.hide, i = admin.hidden.indexOf(k); i >= 0 ? admin.hidden.splice(i, 1) : admin.hidden.push(k); save(); return; }
+  if (e.target.closest('[data-recheck]')) { checkAll(true); return; }
+  if (e.target.closest('[data-export]')) {
+    // 처리 기록을 파일로 → data/state.js 반영이나 서버 저장소 이전에 사용
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([JSON.stringify({ exportedAt: new Date().toISOString(), ...admin }, null, 2)], { type: 'application/json' }));
+    a.download = 'gachi-admin.json'; a.click(); URL.revokeObjectURL(a.href);
+  }
+});
+
+fetch('/api/books?v=4', { signal: AbortSignal.timeout(15000) }).then(async (res) => {
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.error);
+  data = json;
+  const local = (id) => (savedReviews[id] || []).map((r) => ({ ...r, local: true }));
+  data.now.forEach((b) => (b.reviews = [...(b.reviews || []), ...local(b.isbn)]));
+  data.done.forEach((d) => (d.reviews = [...d.reviews, ...local(d.id)]));
+  data.wish = [...(data.wish || []), ...wishSaved.added];
+  render();
+  checkAll(false);
+}).catch((err) => {
+  console.log('불러오기 실패:', err);
+  document.getElementById('view').innerHTML = '<div class="status">데이터를 불러오지 못했어요. 잠시 후 새로고침해 주세요.</div>';
+});
+</script>
+</body>
+</html>

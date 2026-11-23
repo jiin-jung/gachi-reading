@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import books from './api/books.js';
 import cover from './api/cover.js';
 import search from './api/search.js';
+import holding from './api/holding.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -33,13 +34,14 @@ http.createServer(async (req, res) => {
   if (u.pathname === '/api/books') return books(req, wrap(res));
   if (u.pathname === '/api/cover') return cover(req, wrap(res));
   if (u.pathname === '/api/search') return search(req, wrap(res));
+  if (u.pathname === '/api/holding') return holding(req, wrap(res));
   if (u.pathname === '/inu-logo.png') {
     res.writeHead(200, { 'Content-Type': 'image/png' });
     return res.end(fs.readFileSync(path.join(__dirname, 'inu-logo.png')));
   }
-  if (u.pathname === '/' || u.pathname === '/index.html') {
+  if (u.pathname === '/' || u.pathname === '/index.html' || u.pathname === '/admin.html') {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-    return res.end(fs.readFileSync(path.join(__dirname, 'index.html')));
+    return res.end(fs.readFileSync(path.join(__dirname, u.pathname === '/admin.html' ? 'admin.html' : 'index.html')));
   }
   res.writeHead(404).end('not found');
 }).listen(PORT, () => {
