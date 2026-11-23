@@ -151,6 +151,7 @@
   .wish .bar { height:4px; margin:4px 0 0; } .wish .bar > span { background:var(--point); }
   .wish .mp { font-size:12px; color:var(--sub); }
   .wish-more { align-self:center; }
+  .hold { font-size:12px; font-weight:700; color:#1E7A46; } .hold.no { color:#B42318; } .hold.wait { color:var(--sub); font-weight:500; }
   .wish-msg { margin:0; font-size:14px; color:var(--blue); font-weight:600; } .wish-msg a { color:inherit; }
   .mini { width:100%; display:flex; flex-direction:column; gap:6px; text-align:left; margin-top:6px; }
   .mini .mt { font-size:14px; font-weight:700; color:var(--navy); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -193,6 +194,7 @@
     <span>참여 인원·대출 상태와 메모는 예시 데이터이며, 학산도서관 공식 서비스가 아닌 공모전 제안용 프로토타입입니다.</span>
     <details><summary>데이터 출처</summary><div>
       <span>도서 정보: 국립중앙도서관 사서추천도서 Open API · 표지: 국중도 서지정보 API, 없으면 카카오 책 검색 API, 구글 북스 API (모두 없으면 제목으로 표시)</span>
+      <span>학산도서관 소장 여부: 인천대학교 도서관 소장자료 검색</span>
       <span>교환독서 신청과 새로 남긴 메모는 이 브라우저에만 저장됩니다.</span>
     </div></details>
   </footer>
@@ -500,14 +502,14 @@ function wishSection(list, max) {
       <div><b>${esc(w.title)}</b>${w.author ? ` <span class="author">${esc(w.author)}</span>` : ''}
         ${w.reason ? `<p>“${esc(w.reason)}”</p>` : ''}
         <span class="bar"><span style="width:${(n / max) * 100}%"></span></span>
-        <span class="mp"><b>${n}/${max}명</b> ${n >= max ? '· 다음 릴레이로 준비 중' : `· ${max - n}명 더 모이면 시작`}</span></div>
+        <span class="mp"><b>${n}/${max}명</b> ${adminSaved.wish[w.id] === 'approved' ? '· 도서관 승인 · 릴레이 준비 중' : n >= max ? '· 다음 릴레이로 준비 중' : `· ${max - n}명 더 모이면 시작`}</span></div>
       ${mine ? `<button type="button" class="btn ghost sm" data-wish="${esc(w.id)}">신청함</button>`
         : n < max ? `<button type="button" class="btn sm" data-wish="${esc(w.id)}">나도 읽을래요</button>` : ''}
     </li>`;
   }).join('');
   const f = ui.wishForm || { title: '', reason: '', max: 4 };
   const cands = ui.wishCands.map((b, i) => `<li class="wish">${coverHtml(b)}
-      <div><b>${esc(b.title)}</b><span class="author">${esc(b.author)}${b.publisher ? ' · ' + esc(b.publisher) : ''}</span></div>
+      <div><b>${esc(b.title)}</b><span class="author">${esc(b.author)}${b.publisher ? ' · ' + esc(b.publisher) : ''}</span>${holdLine(b)}</div>
       <button type="button" class="btn sm" data-pick="${i}">이 책이에요</button></li>`).join('');
   return `<section class="wish-list">
     <h2 class="sec">다음에 같이 읽을 책 <span>읽고 싶은 책을 올리고 같이 읽을 사람을 모아요. 인원이 다 모이면 도서관이 책을 준비해 릴레이를 시작해요</span></h2>
@@ -524,6 +526,19 @@ function wishSection(list, max) {
     <ul>${items}</ul>
     ${list.length > WISH_SHOW ? `<button type="button" class="btn ghost sm wish-more" data-wish-all>${ui.wishAll ? '접기' : `추천 도서 ${list.length}권 모두 보기`}</button>` : ''}
   </section>`;
+}
+// 추천 후보가 학산도서관에 있는지 (/api/holding). 관리자가 직접 판정한 책은 그 판정을 따름
+function holdLine(b) {
+  const st = adminSaved.holding[b.isbn] || (b.hold && b.hold.status);
+  if (!st) return '<span class="hold wait">학산도서관 소장 확인 중…</span>';
+  if (st === 'held' || st === 'other') return `<span class="hold">학산도서관 소장${b.hold && b.hold.state ? ' · ' + esc(b.hold.state) : ''}${st === 'other' ? ' (다른 판)' : ''}</span>`;
+  if (st === 'missing') return '<span class="hold no">학산도서관에 없어요 · 추천하면 희망도서로 검토해요</span>';
+  return '<span class="hold wait">소장 여부는 도서관에서 확인해요</span>';
+}
+function loadHoldings(cands) {
+  for (const b of cands) fetch(`/api/holding?isbn=${b.isbn}&title=${encodeURIComponent(b.title)}`, { signal: AbortSignal.timeout(10000) })
+    .then((r) => r.json()).catch(() => ({ status: 'error' }))
+    .then((h) => { b.hold = h; if (ui.wishCands === cands) render(); });
 }
 function wish(id) {
   const i = wishSaved.joined.indexOf(id);
@@ -543,6 +558,7 @@ document.addEventListener('submit', async (e) => {
     const json = await res.json();
     if (!res.ok) throw new Error(json.error);
     ui.wishCands = json.books;
+    loadHoldings(json.books);
     ui.wishMsg = json.books.length ? '추천할 책을 골라주세요' : `「${f.title}」 책을 찾지 못했어요. 제목을 다시 확인해 주세요`;
   } catch {
     ui.wishMsg = '책 검색이 잠시 안 돼요. 잠시 후 다시 시도해 주세요';
@@ -573,6 +589,9 @@ function pickWish(i) {
   ui.wishCands = []; ui.wishForm = null;
   render();
 }
+// 관리자 화면(admin.html) 처리 기록: 숨긴 메모·반려한 추천은 빼고 보여줌 (같은 브라우저에서만, 프로토타입)
+const adminSaved = Object.assign({ holding: {}, wish: {}, hidden: [] }, JSON.parse(localStorage.getItem('gachi-admin') || '{}'));
+const memoKey = (id, r) => [id, r.page || '', r.nick, r.text].join('|'); // admin.html과 같은 규칙
 const REVIEW_KEY = 'gachi-reviews';
 const savedReviews = JSON.parse(localStorage.getItem(REVIEW_KEY) || '{}');
 document.addEventListener('submit', (e) => {
@@ -594,7 +613,9 @@ fetch('/api/books?v=4', { // 데이터가 바뀌면 v를 바꿔 CDN 캐시를 �
   data.now.forEach((b) => applyJoined(b, data.relayMax));
   data.done.forEach((d) => d.reviews.push(...(savedReviews[d.id] || [])));
   data.now.forEach((b) => (b.reviews ||= []).push(...(savedReviews[b.isbn] || [])));
-  data.wish = [...(data.wish || []), ...wishSaved.added];
+  data.wish = [...(data.wish || []), ...wishSaved.added].filter((w) => adminSaved.wish[w.id] !== 'rejected');
+  data.now.forEach((b) => (b.reviews = b.reviews.filter((r) => !adminSaved.hidden.includes(memoKey(b.isbn, r)))));
+  data.done.forEach((d) => (d.reviews = d.reviews.filter((r) => !adminSaved.hidden.includes(memoKey(d.id, r)))));
   render();
 }).catch((err) => {
   console.log('도서 불러오기 실패:', err);
